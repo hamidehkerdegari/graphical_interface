@@ -72,3 +72,18 @@ $ ./program_P2.sh main
 ```
 
 ---
+## GUI design
+ 
+ ```sh
+ sudo apt-get install glade
+ glade miro_ros_client_gui.glade
+ ```
+ 
+## MiRo ros:
+ 
+```sh
+$ ssh root@193.168.0.2
+ 
+root@miro:~> 
+$ run_bridge_ros.sh
+ ```
