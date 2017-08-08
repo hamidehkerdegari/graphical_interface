@@ -12,10 +12,10 @@ axes.imshow(image, zorder=0, extent=[0, 1024, 0, 768])
 axes.axis('off')  # clear x- and y-axes
 
 
-a = axes.imshow(image2, zorder=1)
-b = axes.scatter(0, 0, zorder=2)
+emoji_handle = axes.imshow(image2, zorder=1)
+dot_handle = axes.scatter(0, 0, zorder=2)
 def updatefig(i):
-    global a, b
+    global emoji_handle, dot_handle
     x = np.random.random()
     y = np.random.random()
     a.remove()
