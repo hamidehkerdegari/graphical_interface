@@ -7,7 +7,7 @@ from interface_lib import *
 def updatefig(i):
     if rospy.core.is_shutdown():
         return
-    while miro.platform_sensors is None:
+    while (miro.platform_sensors is None) or (miro.platform_state in None):
         pass
     miro.update_data()
     print miro.accel_head.x

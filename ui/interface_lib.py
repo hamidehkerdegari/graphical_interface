@@ -9,6 +9,62 @@ from miro_msgs.msg import platform_config, platform_sensors, platform_state, pla
     core_state, core_control, core_config, bridge_config, bridge_stream
 
 ###############################################################
+
+def fmt(x, f):
+    s = ""
+    x = bytearray(x)
+    for i in range(0, len(x)):
+        if not i == 0:
+            s = s + ", "
+        s = s + f.format(x[i])
+    return s
+
+def hex2(x):
+    return "{0:#04x}".format(x)
+
+def hex4(x):
+    return "{0:#06x}".format(x)
+
+def hex8(x):
+    return "{0:#010x}".format(x)
+
+def get_i2c_comms_text(q):
+    s = hex8(q.success_r) + " / " + hex8(q.success_w)
+    if (s == "0x00c4dca6 / 0x0004c786"):
+        s = "(SHLOFF) " + s
+    if (s == "0x00c4dce6 / 0x0004c786"):
+        s = "(PASS) " + s
+    return s
+
+def flt3(x):
+    return "{0:.3f}".format(x)
+
+def format_fps(fps, uncompressed):
+    text = '{0:.1f}'.format(fps)
+    if uncompressed:
+        text = text + " (uncompressed)"
+    else:
+        text = text + " (compressed)"
+    return text
+
+def firmware_string_sub(code):
+    s = "R"
+    if ((code & 0x8000) >> 15): s = "U"
+    y = ((code & 0x7E00) >> 9)
+    m = ((code & 0x01E0) >> 5)
+    d = ((code & 0x001F) >> 0)
+    return s+"{0:#02d}".format(y)+"{0:#02d}".format(m)+"{0:#02d}".format(d)
+
+def firmware_string(state):
+    a = firmware_string_sub(state.P1_release)
+    b = firmware_string_sub(state.P2_release)
+    c = firmware_string_sub(state.P2_bootloader_release)
+    d = firmware_string_sub(state.P3_release)
+    s = a + " / " + b + " / " + c + " / " + d
+    if (a == b and a == c and a == d):
+        s = "(MATCH) " + s
+    return s
+
 def error(msg):
     print(msg)
     sys.exit(0)
@@ -135,6 +191,7 @@ class miro_ros_client:
 
     #==================================================
     def update_data(self):
+
         # sensors
         q = self.platform_sensors
         self.platform_sensors = None
@@ -157,6 +214,23 @@ class miro_ros_client:
         self.touch_body = q.touch_body
         self.cliff = q.cliff
         self.dip_state = hex2(q.dip_state_phys)
+
+        # state
+        q = self.platform_state
+        self.platform_state = None
+        self.time = q.time_usec * 1e-6
+        self.sound_index_P3 = q.number_of_loaded_sounds
+        self.P1_R_signals = q.P1_R_signals
+        self.P2C_R_signals = q.P2C_R_signals
+        self.P2L_R_signals = q.P2L_R_signals
+        self.P2U_R_signals = q.P2U_R_signals
+        self.text_I2C_comms = get_i2c_comms_text(q)
+        self.text_rng_seed = hex8(q.seed)
+        self.text_P1_error_code = hex2(q.P1_error_code)
+        self.text_firmware = firmware_string(q)
+        self.text_mode.set_text(str(q.P1_mode) + " / " + str(q.P2_mode))
+        self.text_serial.set_text(str.format('{:04d}', q.serial_number))
+        self.text_num_free_stream_buf.set_text(str(q.num_free_stream_buf) + " (" + str(q.msg_id_of_last_stream_buf_recv) + ")")
 
 def hex2(x):
     return "{0:#04x}".format(x)
