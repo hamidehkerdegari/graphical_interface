@@ -24,6 +24,13 @@ def updatefig(i):
     #b = axes.scatter(x * 1024, y * 768, zorder=2)
     b = axes.scatter(x * 100, y * 100, zorder=2)
 
+
+class Cursor():
+    def onclick(self, event):
+        print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+              (event.button, event.x, event.y, event.xdata, event.ydata))
+
+
 #=======================================
 
 if __name__ == "__main__":
@@ -50,6 +57,9 @@ if __name__ == "__main__":
 
     manager = plt.get_current_fig_manager()
     manager.resize(*manager.window.maxsize())
+
+    cursor = Cursor()
+    cid = fig.canvas.mpl_connect('button_press_event', cursor.onclick)
 
     ani = animation.FuncAnimation(fig, updatefig, interval=100)
     plt.show()
