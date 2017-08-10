@@ -4,6 +4,7 @@ import rospy
 import interface_lib as lib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+
 # ==============================================================
 
 class MiroGI():
@@ -14,6 +15,7 @@ class MiroGI():
         Back_image = plt.imread('../documents/biomimetic_core.png')
         self.emoji_1 = plt.imread('../documents/happy.png')
 
+        # Initializing moving images.
         self.screen_size = [800, 450]
         self.fig, self.axes = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         plt.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
@@ -57,6 +59,8 @@ class MiroGI():
         x = self.miro.accel_head.x
         y = self.miro.accel_head.y
         self.emoji_handle = self.img_plot(self.emoji_1, [10, 10], [(x*100)+354, (y*100)+101], 1)
+
+        self.caml = self.img_plot(self.miro.image_caml, [32, 24], [400, 200], 1)
 
     # Getting the cursor click position.
     def onclick(self, event):

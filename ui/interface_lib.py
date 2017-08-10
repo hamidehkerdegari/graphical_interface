@@ -1,3 +1,7 @@
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk,GObject,Gdk,GLib,GdkPixbuf
+
 import sys
 import rospy
 from std_msgs.msg import String
@@ -8,6 +12,14 @@ import miro_msgs
 from miro_msgs.msg import platform_config, platform_sensors, platform_state, platform_mics, platform_control, \
     core_state, core_control, core_config, bridge_config, bridge_stream
 
+import numpy as np
+import time
+import threading
+import cv2
+import math
+from miro_constants import miro
+
+import Image
 ###############################################################
 def hex2(x):
     return "{0:#04x}".format(x)
@@ -33,9 +45,201 @@ Options:
     """
     sys.exit(0)
 
+# We use a quartic barrel distortion model. Pass in the radius
+# of a point in the affine projection to find the distortion
+# coefficient.
+def camera_model_distort_coeff(rad2):
+	rad4 = rad2 * rad2
+	return 1.0 \
+		+ MIRO_CAM_DISTORTION_MODEL_K1 * rad2 \
+		+ MIRO_CAM_DISTORTION_MODEL_K2 * rad4
+
+# Apply distortion (map from affine projection space to image
+# space).
+def camera_model_u2d(u):
+    rad = u[0] * u[0] + u[1] * u[1]
+    z = camera_model_distort_coeff(rad)
+    result = [0] * 2
+    result[0] = u[0] * z;
+    result[1] = u[1] * z;
+    return result
+
+# Map from d (true) to p (pixel).
+#
+# NB: This is strictly a transform into an image, and the
+# image can be any size, so it's unsurprising that we have to
+# indicate the image size as a parameter. For efficiency, we
+# assume the image is either of size RAW or DEC.
+def camera_model_d2p(d, rows, cols):
+    # scale by pixel aspect ratio to correct y coordinate
+    p = d
+    p[1] = p[1] * MIRO_CAM_PIXEL_ASPECT_RATIO
+    # scale by image width (yes, for y coordinate too - that's our standard)
+    p[0] = p[0] * cols
+    p[1] = p[1] * cols
+    # transform by image centre (which is non-zero in P-space)
+    p[0] = p[0] + 0.5 * cols - 0.5
+    p[1] = p[1] + 0.5 * rows - 0.5
+    # ok
+    return p
+
+def show_overlay(im):
+    # The test pattern is a grid at a fixed range.
+    patt_step = 20
+    patt_lim = 100
+    patt_range = 100
+    # extract width and height
+    cols = im.shape[1]
+    rows = im.shape[0]
+    # compute half FOV as an object half width at the given range
+    hori_half_width = math.tan(MIRO_CAM_HORI_HALF_FOV) * patt_range
+    # pre-divide
+    hori_half_width_recip = 0.5 / hori_half_width
+    # pre-stretch the pinhole projection so that after the barrel
+    # distortion, the image is of the expected (correct) scale
+    barrel_correc = 1.0 / camera_model_distort_coeff(0.25)
+    # for each test pattern point
+    u = [0] * 2
+    for i in range(-patt_lim, patt_lim+1, patt_step):
+        for j in range(-patt_lim, patt_lim+1, patt_step):
+            # lay out pattern in undistorted image space
+            u[0] = float(i) * hori_half_width_recip
+            u[1] = float(j) * hori_half_width_recip
+            # apply barrel distortion
+            d = camera_model_u2d(u)
+            # apply barrel correction
+            d[0] = d[0] * barrel_correc
+            d[1] = d[1] * barrel_correc
+            # apply image acquisition
+            p = camera_model_d2p(d, rows, cols)
+            # round (deliberately round down because we're going to
+            # make a pattern at each pixel that is 2x2)
+            xi_ = int(p[0])
+            yi_ = int(p[1])
+            # loop
+            for k in [0, 1]:
+                for l in [0, 1]:
+                    xi = xi_ + k
+                    yi = yi_ + l
+                    # write into image
+                    if xi >= 0 and xi < cols and yi >= 0 and yi < rows:
+                        q = xi * 3 + yi * cols * 3
+                        im.data[q] = np.uint8(255);
+                        im.data[q+1] = np.uint8(255);
+                        im.data[q+2] = np.uint8(255);
+
+
+MIRO_CAM_DISTORTION_MODEL_K1 = -0.75
+MIRO_CAM_DISTORTION_MODEL_K2 = 0.25
+MIRO_CAM_PIXEL_ASPECT_RATIO = 1.0
+MIRO_CAM_HORI_HALF_FOV = miro.__DEG2RAD(45)
+################################################################
+
+class fifo:
+
+    def __init__(self, uncompressed):
+        self.N = 1 # raise if we get "overflow in fifo", or to improve fps measurement
+        self.buf = [None] * self.N
+        self.r = 0
+        self.w = 0
+        self.tN = 30
+        self.ti = 0
+        self.td = 10
+        self.tt = [None] * self.tN
+        self.hz = None
+        self.uncompressed = uncompressed
+        self.lock = threading.Lock()
+
+    def push(self, frm):
+        self.lock.acquire()
+        try:
+            t_frm = time.time()
+            if self.buf[self.w] is None:
+                if self.uncompressed:
+                    pb = GdkPixbuf.Pixbuf.new_from_data(frm.data,
+                        GdkPixbuf.Colorspace.RGB, False, 8,
+                        frm.width, frm.height, frm.step)
+                else:
+                    im = cv2.imdecode(np.fromstring(frm.data, np.uint8),
+                                cv2.IMREAD_COLOR)
+                    w = im.shape[1]
+                    h = im.shape[0]
+                    N = h * w
+                    for i in range(0, N):
+                        tmp = im.data[i*3+0]
+                        im.data[i*3+0] = im.data[i*3+2]
+                        im.data[i*3+2] = tmp
+                    pb = GdkPixbuf.Pixbuf.new_from_data(im.data,
+                                GdkPixbuf.Colorspace.RGB,
+                                False, 8,
+                                w, h, w*3)
+
+                self.buf[self.w] = pb
+            else:
+                print("**** frame dropped ****")
+                pass
+            self.tt[self.ti] = t_frm
+            ti_bak = self.ti - self.td
+            if ti_bak < 0:
+                ti_bak = ti_bak + self.tN
+            if not self.tt[ti_bak] is None:
+                dt = t_frm - self.tt[ti_bak]
+                self.hz = self.td / dt
+                if self.hz > (self.td + 3) and self.td < (self.tN - 1):
+                    self.td = self.td + 1
+                    #print "> ", self.td
+                if self.hz < (self.td - 3) and self.td > 5:
+                    self.td = self.td - 1
+                    #print "< ", self.td
+            self.ti = (self.ti + 1) % self.tN
+        finally:
+            self.lock.release()
+
+    def pop(self):
+        obj = self.buf[self.r]
+        if not obj is None:
+            self.buf[self.r] = None
+            self.r = (self.r + 1) % self.N
+        return obj
+
+    def latest(self):
+        ret = None
+        while True:
+            obj = self.pop()
+            if obj is None:
+                break
+            ret = obj
+        return ret
+
+    def freq(self):
+        hz = self.hz
+        if not hz is None:
+            self.hz = None
+        return hz
 
 ################################################################
 class miro_ros_client:
+    def callback_caml(self, frm):
+        self.caml_fifo.push(frm)
+
+    def callback_camr(self, frm):
+        self.camr_fifo.push(frm)
+
+    def callback_pril(self, frm):
+        self.pril_fifo.push(frm)
+
+    def callback_prir(self, frm):
+        self.prir_fifo.push(frm)
+
+    def callback_priw(self, frm):
+        self.priw_fifo.push(frm)
+
+    def callback_rgbl(self, frm):
+        self.rgbl_fifo.push(frm)
+
+    def callback_rgbr(self, frm):
+        self.rgbr_fifo.push(frm)
+
     def callback_platform_sensors(self, object):
 
         # ignore until active
@@ -89,8 +293,10 @@ class miro_ros_client:
             usage()
 
         # options
-        self.robot_name = ""
         self.drive_pattern = ""
+        self.opt = lambda: 0
+        self.opt.robot_is_phys = None
+        self.opt.uncompressed = False
 
         # handle args
         for arg in sys.argv[1:]:
@@ -102,21 +308,25 @@ class miro_ros_client:
                 key = arg[:f]
                 val = arg[f + 1:]
             if key == "robot":
-                self.robot_name = val
-            elif key == "drive":
-                self.drive_pattern = val
+                self.opt.robot_name = val
+            elif key == "rob":
+                self.opt.robot_is_phys = True
+            elif key == "sim":
+                self.opt.robot_is_phys = False
+            elif key == "uncompressed":
+                self.opt.uncompressed = True
             else:
                 error("argument not recognised \"" + arg + "\"")
 
         # check we got at least one
-        if len(self.robot_name) == 0:
+        if len(self.opt.robot_name) == 0:
             error("argument \"robot\" must be specified")
 
         # set inactive
         self.active = False
 
         # topic root
-        topic_root = "/miro/" + self.robot_name
+        topic_root = "/miro/" + self.opt.robot_name
         print "topic_root", topic_root
 
         # publish
@@ -135,6 +345,51 @@ class miro_ros_client:
 
         # set active
         self.active = True
+
+        # default data
+        self.platform_sensors = None
+        self.platform_state = None
+        self.platform_mics = None
+        self.caml_fifo = fifo(self.opt.uncompressed)
+        self.camr_fifo = fifo(self.opt.uncompressed)
+        self.pril_fifo = fifo(self.opt.uncompressed)
+        self.prir_fifo = fifo(self.opt.uncompressed)
+        self.priw_fifo = fifo(self.opt.uncompressed)
+        self.rgbl_fifo = fifo(self.opt.uncompressed)
+        self.rgbr_fifo = fifo(self.opt.uncompressed)
+        self.core_state = None
+        self.mood = None
+
+        if self.opt.uncompressed:
+            self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml",
+                    Image, self.callback_caml)
+            self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr",
+                    Image, self.callback_camr)
+            self.sub_pril = rospy.Subscriber(topic_root + "/core/pril",
+                    Image, self.callback_pril)
+            self.sub_prir = rospy.Subscriber(topic_root + "/core/prir",
+                    Image, self.callback_prir)
+            self.sub_priw = rospy.Subscriber(topic_root + "/core/priw",
+                    Image, self.callback_priw)
+            self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl",
+                    Image, self.callback_rgbl)
+            self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr",
+                    Image, self.callback_rgbr)
+        else:
+            self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml/compressed",
+                    CompressedImage, self.callback_caml)
+            self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr/compressed",
+                    CompressedImage, self.callback_camr)
+            self.sub_pril = rospy.Subscriber(topic_root + "/core/pril/compressed",
+                    CompressedImage, self.callback_pril)
+            self.sub_prir = rospy.Subscriber(topic_root + "/core/prir/compressed",
+                    CompressedImage, self.callback_prir)
+            self.sub_priw = rospy.Subscriber(topic_root + "/core/priw/compressed",
+                    CompressedImage, self.callback_priw)
+            self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl/compressed",
+                    CompressedImage, self.callback_rgbl)
+            self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr/compressed",
+                    CompressedImage, self.callback_rgbr)
 
     #==================================================
     def update_data(self):
@@ -162,3 +417,6 @@ class miro_ros_client:
         self.cliff = q.cliff
         self.dip_state = hex2(q.dip_state_phys)
 
+        # cameras
+        self.image_caml = self.caml_fifo.latest()
+        self.image_camr = self.camr_fifo.latest()
