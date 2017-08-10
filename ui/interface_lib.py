@@ -21,6 +21,26 @@ from miro_constants import miro
 
 import Image
 ###############################################################
+def add_subplot(ax, fig, rect, axisbg='w'):
+    box = ax.get_position()
+    width = box.width
+    height = box.height
+    inax_position  = ax.transAxes.transform(rect[0:2])
+    transFigure = fig.transFigure.inverted()
+    infig_position = transFigure.transform(inax_position)
+    x = infig_position[0]
+    y = infig_position[1]
+    width *= rect[2]
+    height *= rect[3]  # <= Typo was here
+    subax = fig.add_axes([x,y,width,height],axisbg=axisbg)
+    x_labelsize = subax.get_xticklabels()[0].get_size()
+    y_labelsize = subax.get_yticklabels()[0].get_size()
+    x_labelsize *= rect[2]**0.5
+    y_labelsize *= rect[3]**0.5
+    subax.xaxis.set_tick_params(labelsize=x_labelsize)
+    subax.yaxis.set_tick_params(labelsize=y_labelsize)
+    return subax
+
 def hex2(x):
     return "{0:#04x}".format(x)
 
@@ -282,12 +302,6 @@ class miro_ros_client:
         print("initialising...")
         print(sys.version)
 
-        # default data
-        self.platform_sensors = None
-        self.platform_state = None
-        self.platform_mics = None
-        self.core_state = None
-
         # no arguments gives usage
         if len(sys.argv) == 1:
             usage()
@@ -420,3 +434,8 @@ class miro_ros_client:
         # cameras
         self.image_caml = self.caml_fifo.latest()
         self.image_camr = self.camr_fifo.latest()
+
+        # core_state
+        q = self.core_state
+        self.core_state = None
+        self.selection = q.selection
