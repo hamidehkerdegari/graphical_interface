@@ -47,7 +47,6 @@ class MiroGI():
 
 
         #  Initializing moving circle.
-
         self.ax_circle = lib.add_subplot(self.ax_main, self.fig_main, [0.652, 0.43, 0.275*9.0/16.0, 0.275])
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
@@ -56,10 +55,26 @@ class MiroGI():
         self.ax_circle.set_xlim([-10, 10])
         self.ax_circle.set_ylim([-10, 10])
         self.ax_circle.set_aspect('auto')
-        self.plt_circle_red_handle = self.ax_circle.scatter(2, 7, s=200, c='r', alpha=self.opacity)
-        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity)
-        self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=self.opacity)
+        self.plt_circle_red_handle = self.ax_circle.scatter(2, 7, s=200, c='r', alpha=self.opacity, zorder=1)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity, zorder=1)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=self.opacity, zorder=1)
 
+        #  Initializing camera left.
+        self.ax_camera_l = lib.add_subplot(self.ax_main, self.fig_main, [0.1, 0.1, 0.275, 0.275])
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
+        self.ax_camera_l.patch.set_visible(False)  # Remove backgrounf
+        self.ax_camera_l.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
+        self.plt_camera_l_handle = self.ax_camera_l.imshow(img_back, zorder=1, aspect='auto')
+
+        #  Initializing camera right.
+        self.ax_camera_r = lib.add_subplot(self.ax_main, self.fig_main, [0.3, 0.1, 0.275, 0.275])
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
+        self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
+        self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
+                                     labelbottom='off')
+        self.plt_camera_r_handle = self.ax_camera_r.imshow(img_back, zorder=1, aspect='auto')
 
         # cursor = Cursor()
         cid = self.fig_main.canvas.mpl_connect('button_press_event', self.onclick)
@@ -91,13 +106,19 @@ class MiroGI():
         self.plt_circle_yellow_handle.remove()
         x = self.miro.accel_head.x
         y = self.miro.accel_head.y
-        self.plt_circle_red_handle = self.ax_circle.scatter(x, y, s=200, c='r', alpha=self.opacity)
-        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity)
-        self.plt_circle_yellow_handle = self.ax_circle.scatter(7, 2, s=200, c='y', alpha=self.opacity)
+        self.plt_circle_red_handle = self.ax_circle.scatter(x, y, s=200, c='r', alpha=self.opacity, zorder=1)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity, zorder=1)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(7, 2, s=200, c='y', alpha=self.opacity, zorder=1)
 
-        #self.miro.selection
         self.plt_GPR_handle.remove()
-        self.plt_GPR_handle = self.ax_GPR.bar(self.index, (20, 35, 30, 35, 27, 15, 35, 20), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+        self.plt_GPR_handle = self.ax_GPR.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+
+        self.plt_camera_l_handle.remove()
+        self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+
+        self.plt_camera_r_handle.remove()
+        self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+
 
     # Getting the cursor click position.
     def onclick(self, event):

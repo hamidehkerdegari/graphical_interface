@@ -189,10 +189,8 @@ class fifo:
                         tmp = im.data[i*3+0]
                         im.data[i*3+0] = im.data[i*3+2]
                         im.data[i*3+2] = tmp
-                    pb = GdkPixbuf.Pixbuf.new_from_data(im.data,
-                                GdkPixbuf.Colorspace.RGB,
-                                False, 8,
-                                w, h, w*3)
+                    pb = im
+                    #pb = GdkPixbuf.Pixbuf.new_from_data(im.data, GdkPixbuf.Colorspace.RGB, False, 8, w, h, w*3)
 
                 self.buf[self.w] = pb
             else:
@@ -241,9 +239,11 @@ class fifo:
 class miro_ros_client:
     def callback_caml(self, frm):
         self.caml_fifo.push(frm)
+        self.image_caml = self.caml_fifo.latest()
 
     def callback_camr(self, frm):
         self.camr_fifo.push(frm)
+        self.image_camr = self.camr_fifo.latest()
 
     def callback_pril(self, frm):
         self.pril_fifo.push(frm)
@@ -432,8 +432,8 @@ class miro_ros_client:
         self.dip_state = hex2(q.dip_state_phys)
 
         # cameras
-        self.image_caml = self.caml_fifo.latest()
-        self.image_camr = self.camr_fifo.latest()
+        #self.image_caml = self.caml_fifo.latest()
+        #self.image_camr = self.camr_fifo.latest()
 
         # core_state
         q = self.core_state
