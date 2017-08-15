@@ -14,7 +14,7 @@ class MiroGI():
         self.miro = lib.miro_ros_client()
 
         img_back = plt.imread('../documents/biomimetic_core.png')
-        self.img_emoji1 = plt.imread('../documents/happy.png')
+        #self.img_emoji1 = plt.imread('../documents/happy.png')
 
 
         # Initializing the main window.
@@ -25,14 +25,14 @@ class MiroGI():
         self.pltManager.resize(*self.pltManager.window.maxsize()) # Make full screen
 
         # Setting the back/static image(s).
-        self.ax_main.imshow(img_back, zorder=0, extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        self.ax_main.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
         self.ax_main.axis('off')  # clear x- and y-axes
         self.ax_main.set_xlim([0, self.screen_size[0]])
         self.ax_main.set_ylim([0, self.screen_size[1]])
 
 
         # Initializing the GPR plot.
-        self.ax_GPR = lib.add_subplot(self.ax_main, self.fig_main, [0.2, 0.2, 0.1, 0.1])
+        self.ax_GPR = lib.add_subplot(self.ax_main, self.fig_main, [0.833, 0.695, 0.09, 0.084])
         self.index = np.arange(8)
         self.bar_width = 0.9
         self.opacity = 0.4
@@ -46,15 +46,18 @@ class MiroGI():
 
 
         #  Initializing moving circle.
-        self.ax_circle_red = lib.add_subplot(self.ax_main, self.fig_main, [0.2, 0.2, 0.3, 0.3])
+
+        self.ax_circle = lib.add_subplot(self.ax_main, self.fig_main, [0.652, 0.43, 0.275*9.0/16.0, 0.275])
         #for spine in plt.gca().spines.values():  # Get rid of the frame
         #    spine.set_visible(False)
-        self.ax_circle_red.patch.set_visible(False)  # Remove backgrounf
-        self.ax_circle_red.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
-        self.ax_circle_red.set_xlim([-10, 10])
-        self.ax_circle_red.set_ylim([-10, 10])
-        self.ax_circle_red.set_aspect('equal')
-        self.plt_emoji_handle = self.ax_circle_red.scatter(2, 7, s=100, c='r', alpha=0.9)
+        self.ax_circle.patch.set_visible(False)  # Remove backgrounf
+        self.ax_circle.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
+        self.ax_circle.set_xlim([-10, 10])
+        self.ax_circle.set_ylim([-10, 10])
+        self.ax_circle.set_aspect('auto')
+        self.plt_circle_red_handle = self.ax_circle.scatter(2, 7, s=200, c='r', alpha=0.9)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=0.9)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=0.9)
 
 
         # cursor = Cursor()
@@ -82,15 +85,18 @@ class MiroGI():
         self.miro.update_data()
 
         # Plotting animation
-        self.plt_emoji_handle.remove()
+        self.plt_circle_red_handle.remove()
+        self.plt_circle_blue_handle.remove()
+        self.plt_circle_yellow_handle.remove()
         x = self.miro.accel_head.x
         y = self.miro.accel_head.y
-        self.plt_emoji_handle = self.ax_circle_red.scatter(x, y, s=100, c='r', alpha=0.9)
+        self.plt_circle_red_handle = self.ax_circle.scatter(x, y, s=200, c='r', alpha=0.9)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=0.9)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(7, 2, s=200, c='y', alpha=0.9)
 
 
         self.plt_GPR_handle.remove()
         self.plt_GPR_handle = self.ax_GPR.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color='b')
-        print self.miro.selection
 
     # Getting the cursor click position.
     def onclick(self, event):
