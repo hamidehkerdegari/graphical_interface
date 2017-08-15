@@ -431,3 +431,6 @@ class miro_ros_client:
         q = self.core_state
         self.core_state = None
         self.selection = q.selection
+        self.emotion = q.emotion
+        self.mood = q.mood
+        self.sleep = q.sleep

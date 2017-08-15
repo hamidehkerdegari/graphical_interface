@@ -44,7 +44,7 @@ class MiroGI():
         self.ax_GPR.set_xticks(self.index + self.bar_width / 2)
         self.ax_GPR.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
         self.colors = ['tomato', 'darkcyan', 'paleturquoise', 'blueviolet', 'hotpink', 'seagreen', 'navy']
-        self.plt_GPR_handle = self.ax_GPR.bar(self.index, (20, 35, 30, 35, 27, 15, 35, 20), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+        self.plt_GPR_handle = self.ax_GPR.bar(self.index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
 
         #  Initializing moving circle.
@@ -107,9 +107,9 @@ class MiroGI():
         self.plt_circle_yellow_handle.remove()
         x = self.miro.accel_head.x
         y = self.miro.accel_head.y
-        self.plt_circle_red_handle = self.ax_circle.scatter(x, y, s=200, c='r', alpha=self.opacity, zorder=1)
-        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity, zorder=1)
-        self.plt_circle_yellow_handle = self.ax_circle.scatter(7, 2, s=200, c='y', alpha=self.opacity, zorder=1)
+        self.plt_circle_red_handle = self.ax_circle.scatter(self.miro.emotion.valence*16.0-8.0, self.miro.emotion.arousal*16.0-8.0, s=200, c='r', alpha=self.opacity, zorder=1)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(self.miro.mood.valence*16.0-8.0, self.miro.mood.arousal*16.0-8.0, s=200, c='b', alpha=self.opacity, zorder=1)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(self.miro.sleep.wakefulness*16.0-8.0, self.miro.sleep.pressure*16.0-8.0, s=200, c='y', alpha=self.opacity, zorder=1)
 
         self.plt_GPR_handle.remove()
         self.plt_GPR_handle = self.ax_GPR.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
