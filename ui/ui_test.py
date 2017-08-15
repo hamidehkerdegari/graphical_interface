@@ -14,7 +14,8 @@ class MiroGI():
         self.miro = lib.miro_ros_client()
 
         img_back = plt.imread('../documents/biomimetic_core.png')
-        #self.img_emoji1 = plt.imread('../documents/happy.png')
+        self.img_caml = plt.imread('../documents/caml.png')
+        self.img_camr = plt.imread('../documents/camr.png')
 
 
         # Initializing the main window.
@@ -60,21 +61,21 @@ class MiroGI():
         self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=self.opacity, zorder=1)
 
         #  Initializing camera left.
-        self.ax_camera_l = lib.add_subplot(self.ax_main, self.fig_main, [0.1, 0.1, 0.275, 0.275])
+        self.ax_camera_l = lib.add_subplot(self.ax_main, self.fig_main, [0.27, 0.43, 0.15, 0.17])
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         self.ax_camera_l.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
-        self.plt_camera_l_handle = self.ax_camera_l.imshow(img_back, zorder=1, aspect='auto')
+        self.plt_camera_l_handle = self.ax_camera_l.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
-        self.ax_camera_r = lib.add_subplot(self.ax_main, self.fig_main, [0.3, 0.1, 0.275, 0.275])
+        self.ax_camera_r = lib.add_subplot(self.ax_main, self.fig_main, [0.36, 0.43, 0.15, 0.17])
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
                                      labelbottom='off')
-        self.plt_camera_r_handle = self.ax_camera_r.imshow(img_back, zorder=1, aspect='auto')
+        self.plt_camera_r_handle = self.ax_camera_r.imshow(self.img_camr, zorder=1, aspect='auto')
 
         # cursor = Cursor()
         cid = self.fig_main.canvas.mpl_connect('button_press_event', self.onclick)

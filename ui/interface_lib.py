@@ -245,6 +245,7 @@ class miro_ros_client:
         self.camr_fifo.push(frm)
         self.image_camr = self.camr_fifo.latest()
 
+    '''
     def callback_pril(self, frm):
         self.pril_fifo.push(frm)
 
@@ -259,6 +260,7 @@ class miro_ros_client:
 
     def callback_rgbr(self, frm):
         self.rgbr_fifo.push(frm)
+    '''
 
     def callback_platform_sensors(self, object):
 
@@ -375,35 +377,25 @@ class miro_ros_client:
         self.mood = None
 
         if self.opt.uncompressed:
-            self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml",
-                    Image, self.callback_caml)
-            self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr",
-                    Image, self.callback_camr)
-            self.sub_pril = rospy.Subscriber(topic_root + "/core/pril",
-                    Image, self.callback_pril)
-            self.sub_prir = rospy.Subscriber(topic_root + "/core/prir",
-                    Image, self.callback_prir)
-            self.sub_priw = rospy.Subscriber(topic_root + "/core/priw",
-                    Image, self.callback_priw)
-            self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl",
-                    Image, self.callback_rgbl)
-            self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr",
-                    Image, self.callback_rgbr)
+            self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml", Image, self.callback_caml)
+            self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr", Image, self.callback_camr)
+            '''
+            self.sub_pril = rospy.Subscriber(topic_root + "/core/pril", Image, self.callback_pril)
+            self.sub_prir = rospy.Subscriber(topic_root + "/core/prir", Image, self.callback_prir)
+            self.sub_priw = rospy.Subscriber(topic_root + "/core/priw", Image, self.callback_priw)
+            self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl", Image, self.callback_rgbl)
+            self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr", Image, self.callback_rgbr)
+            '''
         else:
-            self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml/compressed",
-                    CompressedImage, self.callback_caml)
-            self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr/compressed",
-                    CompressedImage, self.callback_camr)
-            self.sub_pril = rospy.Subscriber(topic_root + "/core/pril/compressed",
-                    CompressedImage, self.callback_pril)
-            self.sub_prir = rospy.Subscriber(topic_root + "/core/prir/compressed",
-                    CompressedImage, self.callback_prir)
-            self.sub_priw = rospy.Subscriber(topic_root + "/core/priw/compressed",
-                    CompressedImage, self.callback_priw)
-            self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl/compressed",
-                    CompressedImage, self.callback_rgbl)
-            self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr/compressed",
-                    CompressedImage, self.callback_rgbr)
+            self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml/compressed", CompressedImage, self.callback_caml)
+            self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr/compressed", CompressedImage, self.callback_camr)
+            '''
+            self.sub_pril = rospy.Subscriber(topic_root + "/core/pril/compressed", CompressedImage, self.callback_pril)
+            self.sub_prir = rospy.Subscriber(topic_root + "/core/prir/compressed", CompressedImage, self.callback_prir)
+            self.sub_priw = rospy.Subscriber(topic_root + "/core/priw/compressed", CompressedImage, self.callback_priw)
+            self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl/compressed", CompressedImage, self.callback_rgbl)
+            self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr/compressed", CompressedImage, self.callback_rgbr)
+            '''
 
     #==================================================
     def update_data(self):
