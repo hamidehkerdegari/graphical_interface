@@ -35,29 +35,30 @@ class MiroGI():
         self.ax_GPR = lib.add_subplot(self.ax_main, self.fig_main, [0.833, 0.695, 0.09, 0.084])
         self.index = np.arange(8)
         self.bar_width = 0.9
-        self.opacity = 0.4
-        #for spine in plt.gca().spines.values():  # Get rid of the frame
-        #    spine.set_visible(False)
+        self.opacity = 1.0
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
         self.ax_GPR.patch.set_visible(False)  # Remove backgrounf
         self.ax_GPR.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
         self.ax_GPR.set_xticks(self.index + self.bar_width / 2)
         self.ax_GPR.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-        self.plt_GPR_handle = self.ax_GPR.bar(self.index, (20, 35, 30, 35, 27, 15, 35, 20), self.bar_width, zorder=1, alpha=self.opacity, color='b')
+        self.colors = ['tomato', 'darkcyan', 'paleturquoise', 'blueviolet', 'hotpink', 'seagreen', 'navy']
+        self.plt_GPR_handle = self.ax_GPR.bar(self.index, (20, 35, 30, 35, 27, 15, 35, 20), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
 
         #  Initializing moving circle.
 
         self.ax_circle = lib.add_subplot(self.ax_main, self.fig_main, [0.652, 0.43, 0.275*9.0/16.0, 0.275])
-        #for spine in plt.gca().spines.values():  # Get rid of the frame
-        #    spine.set_visible(False)
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
         self.ax_circle.patch.set_visible(False)  # Remove backgrounf
         self.ax_circle.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_circle.set_xlim([-10, 10])
         self.ax_circle.set_ylim([-10, 10])
         self.ax_circle.set_aspect('auto')
-        self.plt_circle_red_handle = self.ax_circle.scatter(2, 7, s=200, c='r', alpha=0.9)
-        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=0.9)
-        self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=0.9)
+        self.plt_circle_red_handle = self.ax_circle.scatter(2, 7, s=200, c='r', alpha=self.opacity)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=self.opacity)
 
 
         # cursor = Cursor()
@@ -90,13 +91,13 @@ class MiroGI():
         self.plt_circle_yellow_handle.remove()
         x = self.miro.accel_head.x
         y = self.miro.accel_head.y
-        self.plt_circle_red_handle = self.ax_circle.scatter(x, y, s=200, c='r', alpha=0.9)
-        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=0.9)
-        self.plt_circle_yellow_handle = self.ax_circle.scatter(7, 2, s=200, c='y', alpha=0.9)
+        self.plt_circle_red_handle = self.ax_circle.scatter(x, y, s=200, c='r', alpha=self.opacity)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(7, 2, s=200, c='y', alpha=self.opacity)
 
-
+        #self.miro.selection
         self.plt_GPR_handle.remove()
-        self.plt_GPR_handle = self.ax_GPR.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color='b')
+        self.plt_GPR_handle = self.ax_GPR.bar(self.index, (20, 35, 30, 35, 27, 15, 35, 20), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
     # Getting the cursor click position.
     def onclick(self, event):
