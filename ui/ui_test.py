@@ -139,48 +139,48 @@ class MiroGI():
     def plot_updatefig(self, i):
         if rospy.core.is_shutdown():
             return
-        while (self.miro.platform_sensors is None) or (self.miro.core_state is None) or (self.miro.image_caml is None) or (self.miro.image_camr is None):
-            pass
-        self.miro.update_data()
 
-        # Plotting animation
-        self.plt_circle_red_handle.remove()
-        self.plt_circle_blue_handle.remove()
-        self.plt_circle_yellow_handle.remove()
-        x = self.miro.accel_head.x
-        y = self.miro.accel_head.y
-        self.plt_circle_red_handle = self.ax_circle.scatter(self.miro.emotion.valence*16.0-8.0, self.miro.emotion.arousal*16.0-8.0, s=200, c='r', alpha=self.opacity, zorder=1)
-        self.plt_circle_blue_handle = self.ax_circle.scatter(self.miro.mood.valence*16.0-8.0, self.miro.mood.arousal*16.0-8.0, s=200, c='b', alpha=self.opacity, zorder=1)
-        self.plt_circle_yellow_handle = self.ax_circle.scatter(self.miro.sleep.wakefulness*16.0-8.0, self.miro.sleep.pressure*16.0-8.0, s=200, c='y', alpha=self.opacity, zorder=1)
+        if not ((self.miro.image_caml is None) or (self.miro.image_camr is None)):
+            self.plt_camera_l_handle.remove()
+            self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
 
-        self.plt_GPR_handle.remove()
-        self.plt_GPR_handle = self.ax_GPR.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+            self.plt_camera_r_handle.remove()
+            self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
 
-        self.plt_camera_l_handle.remove()
-        self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+        if not ((self.miro.platform_sensors is None) or (self.miro.core_state is None)):
+            self.miro.update_data()
 
-        self.plt_camera_r_handle.remove()
-        self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+            # Plotting animation
+            self.plt_circle_red_handle.remove()
+            self.plt_circle_blue_handle.remove()
+            self.plt_circle_yellow_handle.remove()
+            x = self.miro.accel_head.x
+            y = self.miro.accel_head.y
+            self.plt_circle_red_handle = self.ax_circle.scatter(self.miro.emotion.valence*16.0-8.0, self.miro.emotion.arousal*16.0-8.0, s=200, c='r', alpha=self.opacity, zorder=1)
+            self.plt_circle_blue_handle = self.ax_circle.scatter(self.miro.mood.valence*16.0-8.0, self.miro.mood.arousal*16.0-8.0, s=200, c='b', alpha=self.opacity, zorder=1)
+            self.plt_circle_yellow_handle = self.ax_circle.scatter(self.miro.sleep.wakefulness*16.0-8.0, self.miro.sleep.pressure*16.0-8.0, s=200, c='y', alpha=self.opacity, zorder=1)
 
+            self.plt_GPR_handle.remove()
+            self.plt_GPR_handle = self.ax_GPR.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
-        p = self.miro.priority
-        d = self.miro.disinhibition
-        self.plt_priority_1_handle.remove()
-        self.plt_priority_2_handle.remove()
-        self.plt_priority_3_handle.remove()
-        self.plt_priority_4_handle.remove()
-        self.plt_priority_5_handle.remove()
-        self.plt_priority_6_handle.remove()
-        self.plt_priority_7_handle.remove()
-        self.plt_priority_8_handle.remove()
-        self.plt_priority_1_handle = self.ax_priorities.scatter(3.80, 5.8, s=1600, c='r', linewidths=3*d[0], edgecolor='k', alpha=p[0], zorder=1)
-        self.plt_priority_2_handle = self.ax_priorities.scatter(7.00, 3.0, s=1600, c='r', linewidths=3*d[1], edgecolor='k', alpha=p[1], zorder=1)
-        self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=3*d[2], edgecolor='k', alpha=p[2], zorder=1)
-        self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=3*d[3], edgecolor='k', alpha=p[3], zorder=1)
-        self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=3*d[4], edgecolor='k', alpha=p[4], zorder=1)
-        self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=3*d[5], edgecolor='k', alpha=p[5], zorder=1)
-        self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=3*d[6], edgecolor='k', alpha=p[6], zorder=1)
-        self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=3*d[7], edgecolor='k', alpha=p[7], zorder=1)
+            p = self.miro.priority
+            d = self.miro.disinhibition
+            self.plt_priority_1_handle.remove()
+            self.plt_priority_2_handle.remove()
+            self.plt_priority_3_handle.remove()
+            self.plt_priority_4_handle.remove()
+            self.plt_priority_5_handle.remove()
+            self.plt_priority_6_handle.remove()
+            self.plt_priority_7_handle.remove()
+            self.plt_priority_8_handle.remove()
+            self.plt_priority_1_handle = self.ax_priorities.scatter(3.80, 5.8, s=1600, c='r', linewidths=3*d[0], edgecolor='k', alpha=p[0], zorder=1)
+            self.plt_priority_2_handle = self.ax_priorities.scatter(7.00, 3.0, s=1600, c='r', linewidths=3*d[1], edgecolor='k', alpha=p[1], zorder=1)
+            self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=3*d[2], edgecolor='k', alpha=p[2], zorder=1)
+            self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=3*d[3], edgecolor='k', alpha=p[3], zorder=1)
+            self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=3*d[4], edgecolor='k', alpha=p[4], zorder=1)
+            self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=3*d[5], edgecolor='k', alpha=p[5], zorder=1)
+            self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=3*d[6], edgecolor='k', alpha=p[6], zorder=1)
+            self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=3*d[7], edgecolor='k', alpha=p[7], zorder=1)
 
     # Getting the cursor click position.
     def onclick(self, event):
