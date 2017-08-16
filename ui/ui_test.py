@@ -73,9 +73,51 @@ class MiroGI():
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
-        self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
-                                     labelbottom='off')
+        self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_r_handle = self.ax_camera_r.imshow(self.img_camr, zorder=1, aspect='auto')
+
+        #  Initializing priorities.
+        self.ax_priorities = lib.add_subplot(self.ax_main, self.fig_main, [0.18, 0.78, 0.28, 0.18])
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
+        self.ax_priorities.patch.set_visible(False)  # Remove backgrounf
+        self.ax_priorities.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
+        self.ax_priorities.set_xlim([0, 30])
+        self.ax_priorities.set_ylim([0, 10])
+        self.ax_priorities.set_aspect('auto')
+
+        self.ax_priorities.scatter(3.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_1_handle = self.ax_priorities.scatter(3.8, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(3.8, 5.8, "A1", size=20, ha="center", va="center", zorder=2)
+
+        self.ax_priorities.scatter(7.0, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_2_handle = self.ax_priorities.scatter(7.0, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(7.0, 3.0, "A2", size=20, ha="center", va="center", zorder=2)
+
+        self.ax_priorities.scatter(10.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(10.3, 5.8, "A3", size=20, ha="center", va="center", zorder=2)
+
+        self.ax_priorities.scatter(13.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(13.6, 3.0, "A4", size=20, ha="center", va="center", zorder=2)
+
+        self.ax_priorities.scatter(16.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(16.8, 5.8, "A5", size=20, ha="center", va="center", zorder=2)
+
+        self.ax_priorities.scatter(20.1, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(20.1, 3.0, "A6", size=20, ha="center", va="center", zorder=2)
+
+        self.ax_priorities.scatter(23.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(23.3, 5.8, "A7", size=20, ha="center", va="center", zorder=2)
+
+        self.ax_priorities.scatter(26.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.ax_priorities.text(26.6, 3.0, "A8", size=20, ha="center", va="center", zorder=2)
+
 
         # cursor = Cursor()
         cid = self.fig_main.canvas.mpl_connect('button_press_event', self.onclick)
@@ -97,7 +139,7 @@ class MiroGI():
     def plot_updatefig(self, i):
         if rospy.core.is_shutdown():
             return
-        while (self.miro.platform_sensors is None) or (self.miro.core_state is None):
+        while (self.miro.platform_sensors is None) or (self.miro.core_state is None) or (self.miro.image_caml is None) or (self.miro.image_camr is None):
             pass
         self.miro.update_data()
 
@@ -120,6 +162,25 @@ class MiroGI():
         self.plt_camera_r_handle.remove()
         self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
 
+
+        p = self.miro.priority
+        d = self.miro.disinhibition
+        self.plt_priority_1_handle.remove()
+        self.plt_priority_2_handle.remove()
+        self.plt_priority_3_handle.remove()
+        self.plt_priority_4_handle.remove()
+        self.plt_priority_5_handle.remove()
+        self.plt_priority_6_handle.remove()
+        self.plt_priority_7_handle.remove()
+        self.plt_priority_8_handle.remove()
+        self.plt_priority_1_handle = self.ax_priorities.scatter(3.80, 5.8, s=1600, c='r', linewidths=3*d[0], edgecolor='k', alpha=p[0], zorder=1)
+        self.plt_priority_2_handle = self.ax_priorities.scatter(7.00, 3.0, s=1600, c='r', linewidths=3*d[1], edgecolor='k', alpha=p[1], zorder=1)
+        self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=3*d[2], edgecolor='k', alpha=p[2], zorder=1)
+        self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=3*d[3], edgecolor='k', alpha=p[3], zorder=1)
+        self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=3*d[4], edgecolor='k', alpha=p[4], zorder=1)
+        self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=3*d[5], edgecolor='k', alpha=p[5], zorder=1)
+        self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=3*d[6], edgecolor='k', alpha=p[6], zorder=1)
+        self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=3*d[7], edgecolor='k', alpha=p[7], zorder=1)
 
     # Getting the cursor click position.
     def onclick(self, event):

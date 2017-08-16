@@ -300,6 +300,9 @@ class miro_ros_client:
 
     def __init__(self):
 
+        self.image_caml = None
+        self.image_camr = None
+
         # report
         print("initialising...")
         print(sys.version)
@@ -434,3 +437,5 @@ class miro_ros_client:
         self.emotion = q.emotion
         self.mood = q.mood
         self.sleep = q.sleep
+        self.priority = q.priority
+        self.disinhibition = q.disinhibition
