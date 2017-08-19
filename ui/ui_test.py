@@ -49,8 +49,8 @@ class MiroGI():
 
         #  Initializing moving circle.
         self.ax_circle = lib.add_subplot(self.ax_main, self.fig_main, [0.615, 0.375, 0.3*9.0/16.0, 0.3])
-        #for spine in plt.gca().spines.values():  # Get rid of the frame
-        #    spine.set_visible(False)
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
         self.ax_circle.patch.set_visible(False)  # Remove backgrounf
         self.ax_circle.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_circle.set_xlim([-10, 10])
