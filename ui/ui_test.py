@@ -33,9 +33,9 @@ class MiroGI():
 
 
         # Initializing the GPR plot.
-        self.ax_GPR = lib.add_subplot(self.ax_main, self.fig_main, [0.833, 0.695, 0.09, 0.084])
+        self.ax_GPR = lib.add_subplot(self.ax_main, self.fig_main, [0.82, 0.61, 0.15, 0.12])
         self.index = np.arange(8)
-        self.bar_width = 0.9
+        self.bar_width = 0.7
         self.opacity = 1.0
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
@@ -48,9 +48,9 @@ class MiroGI():
 
 
         #  Initializing moving circle.
-        self.ax_circle = lib.add_subplot(self.ax_main, self.fig_main, [0.652, 0.43, 0.275*9.0/16.0, 0.275])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.ax_circle = lib.add_subplot(self.ax_main, self.fig_main, [0.615, 0.375, 0.3*9.0/16.0, 0.3])
+        #for spine in plt.gca().spines.values():  # Get rid of the frame
+        #    spine.set_visible(False)
         self.ax_circle.patch.set_visible(False)  # Remove backgrounf
         self.ax_circle.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_circle.set_xlim([-10, 10])
@@ -61,7 +61,7 @@ class MiroGI():
         self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=self.opacity, zorder=1)
 
         #  Initializing camera left.
-        self.ax_camera_l = lib.add_subplot(self.ax_main, self.fig_main, [0.27, 0.43, 0.15, 0.17])
+        self.ax_camera_l = lib.add_subplot(self.ax_main, self.fig_main, [0.294, 0.41, 0.15, 0.17])
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         self.ax_camera_l.patch.set_visible(False)  # Remove backgrounf
@@ -69,7 +69,7 @@ class MiroGI():
         self.plt_camera_l_handle = self.ax_camera_l.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
-        self.ax_camera_r = lib.add_subplot(self.ax_main, self.fig_main, [0.36, 0.43, 0.15, 0.17])
+        self.ax_camera_r = lib.add_subplot(self.ax_main, self.fig_main, [0.384, 0.41, 0.15, 0.17])
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
