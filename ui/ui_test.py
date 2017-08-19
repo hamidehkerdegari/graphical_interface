@@ -119,6 +119,18 @@ class MiroGI():
         self.ax_priorities.text(26.6, 3.0, "A8", size=20, ha="center", va="center", zorder=2)
 
 
+        # Initialize Biological clock time.
+        ang = np.deg2rad(45)
+        self.ax_bioclock = lib.add_subplot(self.ax_main, self.fig_main, [0.52, 0.068, 0.24*9.0/16.0, 0.24])
+        self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
+        # for spine in plt.gca().spines.values():  # Get rid of the frame
+        #    spine.set_visible(False)
+        self.ax_bioclock.patch.set_visible(False)  # Remove backgrounf
+        self.ax_bioclock.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
+        self.ax_bioclock.set_xlim([-1, 1])
+        self.ax_bioclock.set_ylim([-1, 1])
+        self.ax_bioclock.set_aspect('auto')
+
         # cursor = Cursor()
         cid = self.fig_main.canvas.mpl_connect('button_press_event', self.onclick)
 
