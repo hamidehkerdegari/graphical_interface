@@ -122,7 +122,6 @@ class MiroGI():
         # Initialize Biological Clock time.
         ang = np.deg2rad(45)
         self.ax_bioclock = lib.add_subplot(self.ax_main, self.fig_main, [0.523, 0.068, 0.24*9.0/16.0, 0.24])
-        self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         self.ax_bioclock.patch.set_visible(False)  # Remove backgrounf
@@ -130,6 +129,7 @@ class MiroGI():
         self.ax_bioclock.set_xlim([-1, 1])
         self.ax_bioclock.set_ylim([-1, 1])
         self.ax_bioclock.set_aspect('auto')
+        self.ax_bioclock_handle = self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
 
         # cursor = Cursor()
         cid = self.fig_main.canvas.mpl_connect('button_press_event', self.onclick)
@@ -151,6 +151,9 @@ class MiroGI():
     def plot_updatefig(self, i):
         if rospy.core.is_shutdown():
             return
+
+        print self.miro.rtc_hrs#, self.miro.rtc_mins, self.miro.rtc_secs
+
 
         if not ((self.miro.image_caml is None) or (self.miro.image_camr is None)):
             self.plt_camera_l_handle.remove()
@@ -193,6 +196,11 @@ class MiroGI():
             self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=3*d[5], edgecolor='k', alpha=p[5], zorder=1)
             self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=3*d[6], edgecolor='k', alpha=p[6], zorder=1)
             self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=3*d[7], edgecolor='k', alpha=p[7], zorder=1)
+
+            # Initialize Biological Clock time.
+            self.ax_bioclock_handle.remove()
+            ang = np.deg2rad(45)
+            self.ax_bioclock_handle = self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
 
     # Getting the cursor click position.
     def onclick(self, event):

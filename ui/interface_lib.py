@@ -303,6 +303,10 @@ class miro_ros_client:
         self.image_caml = None
         self.image_camr = None
 
+        self.rtc_hrs = None
+        self.rtc_mins = None
+        self.rtc_secs = None
+
         # report
         print("initialising...")
         print(sys.version)
@@ -439,3 +443,11 @@ class miro_ros_client:
         self.sleep = q.sleep
         self.priority = q.priority
         self.disinhibition = q.disinhibition
+
+        # platform_statertc
+        q = self.platform_state
+        self.platform_state = None
+        self.rtc_hrs = q.rtc_hrs
+        #self.rtc_mins = q.rtc_mins
+        #self.rtc_secs = q.rtc_secs
+        self.rtc_skew = q.rtc_skew
