@@ -245,16 +245,46 @@ class miro_ros_client:
         self.camr_fifo.push(frm)
         self.image_camr = self.camr_fifo.latest()
 
-    '''
     def callback_pril(self, frm):
         self.pril_fifo.push(frm)
+        self.image_pril = self.pril_fifo.latest()
+
+        # priority frames
+        pb = self.pril_fifo.latest()
+        if not pb is None:
+            pb = pb.scale_simple(128, 96, INTERPTYPE)
+            self.image_pril.set_from_pixbuf(pb)
+            if self.spatial_record > 0:
+                filename = get_temp_filename(self.spatial_record, "_l.png")
+                pb.savev(filename, "png", [], [])
+                self.spatial_record = self.spatial_record + 1
 
     def callback_prir(self, frm):
         self.prir_fifo.push(frm)
+        self.image_prir = self.prir_fifo.latest()
+
+        pb = self.prir_fifo.latest()
+        if not pb is None:
+            pb = pb.scale_simple(128, 96, INTERPTYPE)
+            self.image_prir.set_from_pixbuf(pb)
+            #            if self.spatial_record > 0:
+            #                filename = get_temp_filename(self.spatial_record, "_r.png")
+            #                pb.savev(filename, "png", [], [])
+            #                self.spatial_record = self.spatial_record + 1
 
     def callback_priw(self, frm):
         self.priw_fifo.push(frm)
+        self.image_priw = self.priw_fifo.latest()
 
+        pb = self.priw_fifo.latest()
+        if not pb is None:
+            pb = pb.scale_simple(320, 16, INTERPTYPE)
+            self.image_priw.set_from_pixbuf(pb)
+            #            if self.spatial_record > 0:
+            #                filename = get_temp_filename(self.spatial_record, "_w.png")
+            #                pb.savev(filename, "png", [], [])
+            #                self.spatial_record = self.spatial_record + 1
+    '''
     def callback_rgbl(self, frm):
         self.rgbl_fifo.push(frm)
 
@@ -300,8 +330,8 @@ class miro_ros_client:
 
     def __init__(self):
 
-        self.image_caml = None
-        self.image_camr = None
+        #self.image_caml = None
+        #self.image_camr = None
 
         self.rtc_hrs = None
         self.rtc_mins = None
@@ -386,20 +416,20 @@ class miro_ros_client:
         if self.opt.uncompressed:
             self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml", Image, self.callback_caml)
             self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr", Image, self.callback_camr)
-            '''
             self.sub_pril = rospy.Subscriber(topic_root + "/core/pril", Image, self.callback_pril)
             self.sub_prir = rospy.Subscriber(topic_root + "/core/prir", Image, self.callback_prir)
             self.sub_priw = rospy.Subscriber(topic_root + "/core/priw", Image, self.callback_priw)
+            '''
             self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl", Image, self.callback_rgbl)
             self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr", Image, self.callback_rgbr)
             '''
         else:
             self.sub_caml = rospy.Subscriber(topic_root + "/platform/caml/compressed", CompressedImage, self.callback_caml)
             self.sub_camr = rospy.Subscriber(topic_root + "/platform/camr/compressed", CompressedImage, self.callback_camr)
-            '''
             self.sub_pril = rospy.Subscriber(topic_root + "/core/pril/compressed", CompressedImage, self.callback_pril)
             self.sub_prir = rospy.Subscriber(topic_root + "/core/prir/compressed", CompressedImage, self.callback_prir)
             self.sub_priw = rospy.Subscriber(topic_root + "/core/priw/compressed", CompressedImage, self.callback_priw)
+            '''
             self.sub_rgbl = rospy.Subscriber(topic_root + "/core/rgbl/compressed", CompressedImage, self.callback_rgbl)
             self.sub_rgbr = rospy.Subscriber(topic_root + "/core/rgbr/compressed", CompressedImage, self.callback_rgbr)
             '''
