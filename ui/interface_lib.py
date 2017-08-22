@@ -21,6 +21,13 @@ from miro_constants import miro
 
 import Image
 ###############################################################
+
+
+INTERPTYPE = GdkPixbuf.InterpType.BILINEAR
+
+###############################################################
+
+
 def add_subplot(ax, fig, rect, axisbg='w'):
     box = ax.get_position()
     width = box.width
@@ -237,6 +244,13 @@ class fifo:
 
 ################################################################
 class miro_ros_client:
+    def config_send(self):
+        c = core_config()
+        c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_SEND_PRIORITY
+        c.msg_flags = c.FLAG_UPDATE_SIGNALS
+        self.pub_core_config.publish(c)
+        print("config sent")
+
     def callback_caml(self, frm):
         self.caml_fifo.push(frm)
         self.image_caml = self.caml_fifo.latest()
@@ -249,14 +263,17 @@ class miro_ros_client:
     def callback_pril(self, frm):
         self.pril_fifo.push(frm)
         self.image_pril = self.pril_fifo.latest()
+        self.image_pril = self.image_pril.scale_simple(128, 96, INTERPTYPE)
 
     def callback_prir(self, frm):
         self.prir_fifo.push(frm)
         self.image_prir = self.prir_fifo.latest()
+        self.image_prir = self.image_prir.scale_simple(128, 96, INTERPTYPE)
 
     def callback_priw(self, frm):
         self.priw_fifo.push(frm)
         self.image_priw = self.priw_fifo.latest()
+        self.image_priw = self.image_priw.scale_simple(320, 16, INTERPTYPE)
 
     '''
     def callback_rgbl(self, frm):
@@ -455,7 +472,8 @@ class miro_ros_client:
         # platform_statertc
         q = self.platform_state
         self.platform_state = None
-        self.rtc_hrs = q.rtc_hrs
-        #self.rtc_mins = q.rtc_mins
-        #self.rtc_secs = q.rtc_secs
-        self.rtc_skew = q.rtc_skew
+        if q is not None:
+            self.rtc_hrs = q.rtc_hrs
+            #self.rtc_mins = q.rtc_mins
+            #self.rtc_secs = q.rtc_secs
+            self.rtc_skew = q.rtc_skew

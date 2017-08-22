@@ -10,6 +10,8 @@ import numpy as np
 
 class MiroGI():
     def __init__(self):
+        self.do_config = True
+
         rospy.init_node("miro_ros_client_py", anonymous=True)
         self.miro = lib.miro_ros_client()
 
@@ -155,14 +157,24 @@ class MiroGI():
         print self.miro.rtc_hrs#, self.miro.rtc_mins, self.miro.rtc_secs
 
 
-        if not ((self.miro.image_caml is None) or (self.miro.image_camr is None)):
+        if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
+            #self.plt_camera_l_handle.remove()
+            #self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+
+            #self.plt_camera_r_handle.remove()
+            #self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+            if self.do_config:
+                self.miro.config_send()
+                self.do_config = False
+
+        if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
             self.plt_camera_l_handle.remove()
-            self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+            self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril, zorder=1, aspect='auto')
 
             self.plt_camera_r_handle.remove()
-            self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+            self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir, zorder=1, aspect='auto')
 
-        if not ((self.miro.platform_sensors is None) or (self.miro.core_state is None)):
+        if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
             self.miro.update_data()
 
             # Plotting animation
@@ -206,6 +218,7 @@ class MiroGI():
     def onclick(self, event):
         print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
               (event.button, event.x, event.y, event.xdata, event.ydata))
+        self.miro.config_send()
 
 ################################################################
 if __name__ == "__main__":
