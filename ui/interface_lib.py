@@ -246,10 +246,90 @@ class fifo:
 class miro_ros_client:
     def config_send(self):
         c = core_config()
+        c.P2B_W_signals = c.P2B_W_signals | miro.MIRO_P2B_W_BRANCH_ENABLE
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_ENABLE
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_ADJUST_RTC
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_VALENCE_DYNAMICS
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_AROUSAL_DYNAMICS
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_ENABLE_SLEEP
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FROM_CLOCK
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FROM_WAKEFULNESS
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FROM_TOUCH
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FROM_LIGHT
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FROM_SOUND
+        c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FROM_ACCEL
+        #c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FROM_SLEEP_BLOCKED
+        #c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_RANDOMIZE_VALENCE
+        #c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_FAST_SLEEP_DYNAMICS
+        c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_ENABLE
+        c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_THROUGH_LIGHT
+        c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_THROUGH_TAIL
+        c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_THROUGH_EYELIDS
+        c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_THROUGH_EARS
+        c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_THROUGH_VOCAL
+        c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_THROUGH_BODY
+        #c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_THROUGH_PING
+        #c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_NO_PIRATE_NOISES
+        #c.P2U_W_express_signals = c.P2U_W_express_signals | miro.MIRO_P2U_W_EXPRESS_DO_PIRATE_NOISES
+        c.P2U_W_action_signals = c.P2U_W_action_signals | miro.MIRO_P2U_W_ACTION_ENABLE
+        #c.P2U_W_action_signals = c.P2U_W_action_signals | miro.MIRO_P2U_W_ACTION_DEBUG
+        #c.P2U_W_action_signals = c.P2U_W_action_signals | miro.MIRO_P2U_W_ACTION_FORCE_MULL
+        #c.P2U_W_action_signals = c.P2U_W_action_signals | miro.MIRO_P2U_W_ACTION_RANDOMIZE_ORIENT
+        #c.P2U_W_action_signals = c.P2U_W_action_signals | miro.MIRO_P2U_W_ACTION_DISABLE_HALT
+        c.P2U_W_action_signals = c.P2U_W_action_signals | miro.MIRO_P2U_W_ACTION_MODULATE_BY_SONAR
+        c.P2U_W_body_signals = c.P2U_W_body_signals | miro.MIRO_P2U_W_BODY_ENABLE
+        #c.P2U_W_body_signals = c.P2U_W_body_signals | miro.MIRO_P2U_W_BODY_RESET_KC_INTEGRATORS
+        #c.P2U_W_body_signals = c.P2U_W_body_signals | miro.MIRO_P2U_W_BODY_NO_PUSH
+        #c.P2U_W_body_signals = c.P2U_W_body_signals | miro.MIRO_P2U_W_BODY_NO_PUSH_MOTION
+        #c.P2U_W_body_signals = c.P2U_W_body_signals | miro.MIRO_P2U_W_BODY_NO_PUSH_TRANSLATION
+        c.P2U_W_body_signals = c.P2U_W_body_signals | miro.MIRO_P2U_W_BODY_NO_PUSH_INTO_SONAR
+        #c.P2L_W_signals = c.P2L_W_signals | miro.MIRO_P2L_W_ENABLE_POS_CONTROL
+        c.P2L_W_signals = c.P2L_W_signals | miro.MIRO_P2L_W_ENABLE_CLIFF_REFLEX
+        c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_ENABLE
+        #c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_IGNORE_AUDIO
+        #c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_IGNORE_VIDEO
         c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_SEND_PRIORITY
-        c.msg_flags = c.FLAG_UPDATE_SIGNALS
+        #c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_SEND_OTHER
+        #c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_NO_REAFF_COMPROMISE
+        #c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_NO_SUPPRESS
+        #c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_SHOW_COMPROMISE
+        #c.P2S_W_signals = c.P2S_W_signals | miro.MIRO_P2S_W_SPATIAL_SHOW_TEST_PATTERN
+        #c.P1_W_signals = c.P1_W_signals | miro.MIRO_P1_W_TEST_ALARM
+        #c.P1_W_signals = c.P1_W_signals | miro.MIRO_P1_W_NO_I2C_BUSY_ALARM
+
+        c.msg_flags = c.FLAG_UPDATE_SIGNALS;
         self.pub_core_config.publish(c)
         print("config sent")
+
+        # bridge/config
+        q = bridge_config()
+        q.flags = miro.MIRO_BRIDGE_UPDATE
+        self.pub_bridge_config.publish(q)
+        print("bridge/config sent")
+
+        # bridge/stream
+        q = bridge_stream()
+        q.sound_index_P3 = 0 # Plays music
+        self.pub_bridge_stream.publish(q)
+        print("bridge/stream sent")
+
+        # platform/config
+        self.send_platform_config = False
+        q = platform_config()
+        q.reset = 0
+        q.frame_size = 320
+        max_frame_rate = 8
+        q.frame_rate = max_frame_rate * 0.5
+        self.pub_platform_config.publish(q)
+        print("platform/config sent")
+
+        # publish
+        q = platform_control()
+        q.msg_flags = platform_control.FLAG_SYNC_PLATFORM | platform_control.FLAG_SYNC_CORE
+
+        # publish
+        q = core_control()
+        q.msg_flags = core_control.FLAG_SYNC_PLATFORM | core_control.FLAG_SYNC_CORE
 
     def callback_caml(self, frm):
         self.caml_fifo.push(frm)
@@ -263,17 +343,17 @@ class miro_ros_client:
     def callback_pril(self, frm):
         self.pril_fifo.push(frm)
         self.image_pril = self.pril_fifo.latest()
-        self.image_pril = self.image_pril.scale_simple(128, 96, INTERPTYPE)
+        #self.image_pril = self.image_pril.scale_simple(128, 96, INTERPTYPE)
 
     def callback_prir(self, frm):
         self.prir_fifo.push(frm)
         self.image_prir = self.prir_fifo.latest()
-        self.image_prir = self.image_prir.scale_simple(128, 96, INTERPTYPE)
+        #self.image_prir = self.image_prir.scale_simple(128, 96, INTERPTYPE)
 
     def callback_priw(self, frm):
         self.priw_fifo.push(frm)
         self.image_priw = self.priw_fifo.latest()
-        self.image_priw = self.image_priw.scale_simple(320, 16, INTERPTYPE)
+        #self.image_priw = self.image_priw.scale_simple(320, 16, INTERPTYPE)
 
     '''
     def callback_rgbl(self, frm):
@@ -431,7 +511,6 @@ class miro_ros_client:
 
     #==================================================
     def update_data(self):
-
         # sensors
         q = self.platform_sensors
         self.platform_sensors = None
