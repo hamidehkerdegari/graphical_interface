@@ -245,7 +245,6 @@ class fifo:
 ################################################################
 class miro_ros_client:
     def config_send(self):
-
         c = core_config()
         c.P2B_W_signals = c.P2B_W_signals | miro.MIRO_P2B_W_BRANCH_ENABLE
         c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_ENABLE
@@ -302,13 +301,13 @@ class miro_ros_client:
         self.pub_core_config.publish(c)
         print("config sent")
 
-        '''
+
         # bridge/config
         q = bridge_config()
         q.flags = miro.MIRO_BRIDGE_UPDATE
         self.pub_bridge_config.publish(q)
         print("bridge/config sent")
-
+        '''
         # bridge/stream
         q = bridge_stream()
         q.sound_index_P3 = 0 # Plays music
