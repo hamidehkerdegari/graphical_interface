@@ -173,8 +173,6 @@ class MiroGI():
 
             self.plt_camera_r_handle.remove()
             self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir, zorder=1, aspect='auto')
-        else:
-            self.miro.config_send()
 
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
             self.miro.update_data()

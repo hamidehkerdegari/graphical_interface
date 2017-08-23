@@ -245,6 +245,7 @@ class fifo:
 ################################################################
 class miro_ros_client:
     def config_send(self):
+
         c = core_config()
         c.P2B_W_signals = c.P2B_W_signals | miro.MIRO_P2B_W_BRANCH_ENABLE
         c.P2U_W_affect_signals = c.P2U_W_affect_signals | miro.MIRO_P2U_W_AFFECT_ENABLE
@@ -301,6 +302,7 @@ class miro_ros_client:
         self.pub_core_config.publish(c)
         print("config sent")
 
+        '''
         # bridge/config
         q = bridge_config()
         q.flags = miro.MIRO_BRIDGE_UPDATE
@@ -330,6 +332,7 @@ class miro_ros_client:
         # publish
         q = core_control()
         q.msg_flags = core_control.FLAG_SYNC_PLATFORM | core_control.FLAG_SYNC_CORE
+        '''
 
     def callback_caml(self, frm):
         self.caml_fifo.push(frm)
