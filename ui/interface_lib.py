@@ -337,6 +337,10 @@ class miro_ros_client:
         self.caml_fifo.push(frm)
         self.image_caml = self.caml_fifo.latest()
 
+        if self.do_config:
+            self.config_send()
+            self.do_config = False
+
     def callback_camr(self, frm):
         self.camr_fifo.push(frm)
         self.image_camr = self.camr_fifo.latest()
@@ -407,6 +411,8 @@ class miro_ros_client:
         self.core_state = object
 
     def __init__(self):
+
+        self.do_config = True
 
         self.image_caml = None
         self.image_camr = None

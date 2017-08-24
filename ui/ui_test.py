@@ -11,7 +11,7 @@ from matplotlib.widgets import Cursor
 
 class MiroGI():
     def __init__(self):
-        self.do_config = True
+        self.show_pri = False
 
         rospy.init_node("miro_ros_client_py", anonymous=True)
         self.miro = lib.miro_ros_client()
@@ -19,6 +19,7 @@ class MiroGI():
         img_back = plt.imread('../documents/biomimetic_core.png')
         self.img_caml = plt.imread('../documents/caml.png')
         self.img_camr = plt.imread('../documents/camr.png')
+        self.img_priw = plt.imread('../documents/priw.jpg')
 
 
         # Initializing the main window.
@@ -59,9 +60,9 @@ class MiroGI():
         self.ax_circle.set_xlim([-10, 10])
         self.ax_circle.set_ylim([-10, 10])
         self.ax_circle.set_aspect('auto')
-        self.plt_circle_red_handle = self.ax_circle.scatter(2, 7, s=200, c='r', alpha=self.opacity, zorder=1)
-        self.plt_circle_blue_handle = self.ax_circle.scatter(2, 7, s=200, c='b', alpha=self.opacity, zorder=1)
-        self.plt_circle_yellow_handle = self.ax_circle.scatter(2, 7, s=200, c='y', alpha=self.opacity, zorder=1)
+        self.plt_circle_red_handle = self.ax_circle.scatter(0, 0, s=200, c='r', alpha=self.opacity, zorder=1)
+        self.plt_circle_blue_handle = self.ax_circle.scatter(0, 0, s=200, c='b', alpha=self.opacity, zorder=1)
+        self.plt_circle_yellow_handle = self.ax_circle.scatter(0, 0, s=200, c='y', alpha=self.opacity, zorder=1)
 
         #  Initializing camera left.
         self.ax_camera_l = lib.add_subplot(self.ax_main, self.fig_main, [0.294, 0.41, 0.15, 0.17])
@@ -85,7 +86,7 @@ class MiroGI():
             spine.set_visible(False)
         self.ax_priw.patch.set_visible(False)  # Remove backgrounf
         self.ax_priw.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
-        self.plt_priw_handle = self.ax_priw.imshow(self.img_camr, zorder=1, extent=[0,320,0,16])
+        self.plt_priw_handle = self.ax_priw.imshow(self.img_priw, zorder=1, extent=[0,320,0,16])
 
         #  Initializing priorities.
         self.ax_priorities = lib.add_subplot(self.ax_main, self.fig_main, [0.18, 0.78, 0.28, 0.18])
@@ -165,26 +166,24 @@ class MiroGI():
 
         #print self.miro.rtc_hrs#, self.miro.rtc_mins, self.miro.rtc_secs
 
-
-        if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
-            #self.plt_camera_l_handle.remove()
-            #self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
-
-            #self.plt_camera_r_handle.remove()
-            #self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
-            if self.do_config:
-                self.miro.config_send()
-                self.do_config = False
-
-        if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-            self.plt_camera_l_handle.remove()
-            self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
-
-            self.plt_camera_r_handle.remove()
-            self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
-
+        if (self.miro.image_priw is not None):
             self.plt_priw_handle.remove()
-            self.plt_priw_handle = self.ax_priw.imshow(self.miro.image_priw[:, :, 2], zorder=1, extent=[0,320,0,16], interpolation='none', cmap='jet')
+            self.plt_priw_handle = self.ax_priw.imshow(self.miro.image_priw[:, :, 0], zorder=1, extent=[0, 320, 0, 16], interpolation='none', cmap='jet')
+
+        if not self.show_pri:
+            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
+                self.plt_camera_l_handle.remove()
+                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+
+                self.plt_camera_r_handle.remove()
+                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+        else:
+            if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
+                self.plt_camera_l_handle.remove()
+                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
+
+                self.plt_camera_r_handle.remove()
+                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
 
 
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
@@ -231,7 +230,8 @@ class MiroGI():
     def onclick(self, event):
         print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
               (event.button, event.x, event.y, event.xdata, event.ydata))
-        self.miro.config_send()
+        if 383 < event.x and event.x < 694 and 280 < event.y and event.y < 396:
+            self.show_pri = not self.show_pri
 
 ################################################################
 if __name__ == "__main__":
