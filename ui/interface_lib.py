@@ -297,7 +297,7 @@ class miro_ros_client:
         #c.P1_W_signals = c.P1_W_signals | miro.MIRO_P1_W_TEST_ALARM
         #c.P1_W_signals = c.P1_W_signals | miro.MIRO_P1_W_NO_I2C_BUSY_ALARM
 
-        c.msg_flags = c.FLAG_UPDATE_SIGNALS;
+        c.msg_flags = c.FLAG_UPDATE_SIGNALS
         self.pub_core_config.publish(c)
         print("config sent")
 
@@ -382,6 +382,11 @@ class miro_ros_client:
 
         # store object
         self.platform_state = object
+
+        # send back a core control message so that flags get respected
+        q = core_control()
+        # q.msg_flags = core_control.FLAG_SYNC_PLATFORM | core_control.FLAG_SYNC_CORE
+        self.pub_core_control.publish(q)
 
     def callback_platform_mics(self, object):
 
