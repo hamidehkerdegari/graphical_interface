@@ -5,6 +5,7 @@ import interface_lib as lib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
+from matplotlib.widgets import Cursor
 
 # ==============================================================
 
@@ -77,6 +78,14 @@ class MiroGI():
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_r_handle = self.ax_camera_r.imshow(self.img_camr, zorder=1, aspect='auto')
+
+        #  Initializing priw.
+        self.ax_priw = lib.add_subplot(self.ax_main, self.fig_main, [0.2655, 0.602, 0.3, 0.025])
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
+        self.ax_priw.patch.set_visible(False)  # Remove backgrounf
+        self.ax_priw.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
+        self.plt_priw_handle = self.ax_priw.imshow(self.img_camr, zorder=1, extent=[0,320,0,16])
 
         #  Initializing priorities.
         self.ax_priorities = lib.add_subplot(self.ax_main, self.fig_main, [0.18, 0.78, 0.28, 0.18])
@@ -154,7 +163,7 @@ class MiroGI():
         if rospy.core.is_shutdown():
             return
 
-        print self.miro.rtc_hrs#, self.miro.rtc_mins, self.miro.rtc_secs
+        #print self.miro.rtc_hrs#, self.miro.rtc_mins, self.miro.rtc_secs
 
 
         if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
@@ -169,10 +178,14 @@ class MiroGI():
 
         if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
             self.plt_camera_l_handle.remove()
-            self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril, zorder=1, aspect='auto')
+            self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
 
             self.plt_camera_r_handle.remove()
-            self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir, zorder=1, aspect='auto')
+            self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
+
+            self.plt_priw_handle.remove()
+            self.plt_priw_handle = self.ax_priw.imshow(self.miro.image_priw[:, :, 2], zorder=1, extent=[0,320,0,16], interpolation='none', cmap='jet')
+
 
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
             self.miro.update_data()
