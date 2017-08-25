@@ -424,6 +424,7 @@ class miro_ros_client:
         self.rtc_hrs = None
         self.rtc_mins = None
         self.rtc_secs = None
+        self.rtc_skew = None
 
         # report
         print("initialising...")
