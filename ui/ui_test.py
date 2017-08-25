@@ -155,11 +155,11 @@ class MiroGI():
         # cursor = Cursor()
         cid = fig_main.canvas.mpl_connect('button_press_event', self.handle_lick)
 
-        return animation.FuncAnimation(fig_main, self.MainPage_Updatefig, interval=self.interval)
+        return animation.FuncAnimation(fig_main, self.MainWindow_Updatefig, interval=self.interval)
 
     #=========================
 
-    def initSpetialAMPage(self):
+    def initSpetialAMWindow(self):
         # Initializing the main window.
         fig_main, ax_main = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig_main.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
@@ -202,11 +202,11 @@ class MiroGI():
 
         cid = fig_main.canvas.mpl_connect('close_event', self.handle_close)
 
-        return animation.FuncAnimation(fig_main, self.MainPage_Updatefig, interval=self.interval)
+        return animation.FuncAnimation(fig_main, self.SpetialAMWindow_Updatefig, interval=self.interval)
 
     # =========================
 
-    def MainPage_Updatefig(self, i):
+    def MainWindow_Updatefig(self, i):
         if rospy.core.is_shutdown() or not self.animat_MainWindow:
             return
 
@@ -274,6 +274,31 @@ class MiroGI():
 
     # =========================
 
+    def SpetialAMWindow_Updatefig(self, i):
+        if rospy.core.is_shutdown():
+            return
+
+        if (self.miro.image_priw is not None):
+            self.plt_priw_handle.remove()
+            self.plt_priw_handle = self.ax_priw.imshow(self.miro.image_priw[:, :, 0], zorder=1, extent=[0, 320, 0, 16], interpolation='none', cmap='jet')
+
+        if self.show_pri:
+            if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
+                self.plt_camera_l_handle.remove()
+                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
+
+                self.plt_camera_r_handle.remove()
+                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
+        else:
+            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
+                self.plt_camera_l_handle.remove()
+                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+
+                self.plt_camera_r_handle.remove()
+                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+
+    # =========================
+
     # Getting the cursor click position.
     def handle_lick(self, event):
         print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
@@ -282,7 +307,7 @@ class MiroGI():
         # OnClick for SpetialAM
         if 718 < event.x and event.x < 739 and 259 < event.y and event.y < 276:
             self.animat_MainWindow = False
-            self.initSpetialAMPage()
+            self.initSpetialAMWindow()
             plt.show()
 
         # OnClick for switching between cameras and pri
