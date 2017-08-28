@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 from matplotlib.widgets import Cursor
+from matplotlib.widgets import Button, RadioButtons
 
 # ==============================================================
 
@@ -28,8 +29,9 @@ class MiroGI():
         self.Main_Window = self.initMainWindow()
         plt.show()
 
-
-
+    def RmFrame(self):
+        for spine in plt.gca().spines.values():  # Get rid of the frame
+            spine.set_visible(False)
 
     def initMainWindow(self):
         # Initializing the main window.
@@ -50,8 +52,7 @@ class MiroGI():
         self.ax_GPR = lib.add_subplot(ax_main, fig_main, [0.82, 0.61, 0.15, 0.12])
         self.index = np.arange(8)
         self.bar_width = 0.7
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.RmFrame()
         self.ax_GPR.patch.set_visible(False)  # Remove backgrounf
         self.ax_GPR.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
         self.ax_GPR.set_xticks(self.index + self.bar_width / 2)
@@ -61,8 +62,7 @@ class MiroGI():
 
         #  Initializing moving circle.
         self.ax_circle = lib.add_subplot(ax_main, fig_main, [0.615, 0.375, 0.3 * 9.0 / 16.0, 0.3])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.RmFrame()
         self.ax_circle.patch.set_visible(False)  # Remove backgrounf
         self.ax_circle.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_circle.set_xlim([-10, 10])
@@ -74,32 +74,28 @@ class MiroGI():
 
         #  Initializing camera left.
         self.ax_camera_l = lib.add_subplot(ax_main, fig_main, [0.294, 0.41, 0.15, 0.17])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.RmFrame()
         self.ax_camera_l.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_l_handle = self.ax_camera_l.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
         self.ax_camera_r = lib.add_subplot(ax_main, fig_main, [0.384, 0.41, 0.15, 0.17])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.RmFrame()
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_r_handle = self.ax_camera_r.imshow(self.img_camr, zorder=1, aspect='auto')
 
         #  Initializing priw.
         self.ax_priw = lib.add_subplot(ax_main, fig_main, [0.2655, 0.602, 0.3, 0.025])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.RmFrame()
         self.ax_priw.patch.set_visible(False)  # Remove backgrounf
         self.ax_priw.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_priw_handle = self.ax_priw.imshow(self.img_priw, zorder=1, extent=[0, 320, 0, 16])
 
         #  Initializing priorities.
         self.ax_priorities = lib.add_subplot(ax_main, fig_main, [0.18, 0.78, 0.28, 0.18])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.RmFrame()
         self.ax_priorities.patch.set_visible(False)  # Remove backgrounf
         self.ax_priorities.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_priorities.set_xlim([0, 30])
@@ -119,8 +115,7 @@ class MiroGI():
         self.ax_priorities.text(10.3, 5.8, "A3", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(13.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=1, edgecolor='k',
-                                                                alpha=0.5, zorder=1)
+        self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(13.6, 3.0, "A4", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(16.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
@@ -142,8 +137,7 @@ class MiroGI():
         # Initialize Biological Clock time.
         ang = np.deg2rad(45)
         self.ax_bioclock = lib.add_subplot(ax_main, fig_main, [0.523, 0.068, 0.24 * 9.0 / 16.0, 0.24])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.RmFrame()
         self.ax_bioclock.patch.set_visible(False)  # Remove backgrounf
         self.ax_bioclock.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_bioclock.set_xlim([-1, 1])
@@ -159,49 +153,76 @@ class MiroGI():
     #=========================
 
     def initSpetialAMWindow(self):
-        # Initializing the main window.
-        fig_main, ax_main = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
-        fig_main.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
+        # Initializing a new window.
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
+        fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
         pltManager = plt.get_current_fig_manager()
         pltManager.resize(*pltManager.window.maxsize())  # Make full screen
-        fig_main.canvas.set_window_title('Spatial Attention Model')
+        fig.canvas.set_window_title('Spatial Attention Model')
 
         # Setting the back/static image(s).
         img_back = plt.imread('../documents/SpetialAM.png')
-        ax_main.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
-        ax_main.axis('off')  # clear x- and y-axes
-        ax_main.set_xlim([0, self.screen_size[0]])
-        ax_main.set_ylim([0, self.screen_size[1]])
+        ax.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax.axis('off')  # clear x- and y-axes
+        ax.set_xlim([0, self.screen_size[0]])
+        ax.set_ylim([0, self.screen_size[1]])
 
         #  Initializing camera left.
-        self.ax_camera_l_SAM = lib.add_subplot(ax_main, fig_main, [0.294, 0.41, 0.15, 0.17])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.294, 0.41, 0.15, 0.17])
+        self.RmFrame()
         self.ax_camera_l_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
                                      labelbottom='off')
         self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
-        self.ax_camera_r_SAM = lib.add_subplot(ax_main, fig_main, [0.384, 0.41, 0.15, 0.17])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.384, 0.41, 0.15, 0.17])
+        self.RmFrame()
         self.ax_camera_r_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
                                      labelbottom='off')
         self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.img_camr, zorder=1, aspect='auto')
 
         #  Initializing priw.
-        self.ax_priw_SAM = lib.add_subplot(ax_main, fig_main, [0.2655, 0.602, 0.3, 0.025])
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        self.ax_priw_SAM = lib.add_subplot(ax, fig, [0.2655, 0.602, 0.3, 0.025])
+        self.RmFrame()
         self.ax_priw_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_priw_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_priw_handle_SAM = self.ax_priw_SAM.imshow(self.img_priw, zorder=1, extent=[0, 320, 0, 16])
 
-        cid = fig_main.canvas.mpl_connect('close_event', self.handle_close)
+        cid = fig.canvas.mpl_connect('close_event', self.handle_close)
 
-        return animation.FuncAnimation(fig_main, self.SpetialAMWindow_Updatefig, interval=self.interval)
+        return animation.FuncAnimation(fig, self.SpetialAMWindow_Updatefig, interval=self.interval)
+
+    # =========================
+
+    def initGPRWindow(self):
+        # Initializing a new window.
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
+        fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
+        pltManager = plt.get_current_fig_manager()
+        pltManager.resize(*pltManager.window.maxsize())  # Make full screen
+        fig.canvas.set_window_title('GPR Basal Ganglia Model (branch s/w)')
+
+        # Setting the back/static image.
+        img_back = plt.imread('../documents/GPRWindow.png')
+        ax.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax.axis('off')  # clear x- and y-axes
+        ax.set_xlim([0, self.screen_size[0]])
+        ax.set_ylim([0, self.screen_size[1]])
+
+        # Initializing the GPR plot.
+        self.ax_GPRWin = lib.add_subplot(ax, fig, [0.82, 0.61, 0.15, 0.12])
+        self.RmFrame()
+        self.ax_GPRWin.patch.set_visible(False)  # Remove backgrounf
+        self.ax_GPRWin.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
+        self.ax_GPRWin.set_xticks(self.index + self.bar_width / 2)
+        self.ax_GPRWin.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+        self.plt_GPRWin_handle = self.ax_GPRWin.bar(self.index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+
+        cid = fig.canvas.mpl_connect('close_event', self.handle_close)
+
+        return animation.FuncAnimation(fig, self.GPRWindow_Updatefig, interval=self.interval)
 
     # =========================
 
@@ -301,6 +322,18 @@ class MiroGI():
 
     # =========================
 
+    def GPRWindow_Updatefig(self, i):
+        if rospy.core.is_shutdown():
+            return
+
+        if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
+            self.miro.update_data()
+
+            self.plt_GPRWin_handle.remove()
+            self.plt_GPRWin_handle = self.ax_GPRWin.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+
+    # =========================
+
     # Getting the cursor click position.
     def handle_click(self, event):
         print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
@@ -310,6 +343,11 @@ class MiroGI():
             # OnClick for SpetialAM
             self.animate_MainWindow = False
             self.AM_Window = self.initSpetialAMWindow()
+            plt.show()
+        elif (861 < event.x and event.x < 883 and 522 < event.y and event.y < 539):
+            # OnClick for SpetialAM
+            self.animate_MainWindow = False
+            self.GPR_Window = self.initGPRWindow()
             plt.show()
         elif 383 < event.x and event.x < 694 and 280 < event.y and event.y < 396:
             # OnClick for switching between cameras and pri
