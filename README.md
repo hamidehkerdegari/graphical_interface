@@ -87,3 +87,11 @@ $ ssh root@193.168.0.2
 root@miro:~> 
 $ run_bridge_ros.sh
  ```
+ 
+ ## Links:
+ 
+ https://consequential.bitbucket.io/Technical_Interfaces_Core_Interface.html
+ 
+ https://consequential.bitbucket.io/Developer_Examples_Python_GUI_Client.html
+ 
+ https://consequential.bitbucket.io/core_state.msg
