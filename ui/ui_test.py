@@ -226,6 +226,39 @@ class MiroGI():
 
     # =========================
 
+    def initAffectStateWindow(self):
+        # Initializing a new window.
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
+        fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
+        pltManager = plt.get_current_fig_manager()
+        pltManager.resize(*pltManager.window.maxsize())  # Make full screen
+        fig.canvas.set_window_title('GPR Basal Ganglia Model (branch s/w)')
+
+        # Setting the back/static image.
+        img_back = plt.imread('../documents/affect_state.png')
+        ax.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax.axis('off')  # clear x- and y-axes
+        ax.set_xlim([0, self.screen_size[0]])
+        ax.set_ylim([0, self.screen_size[1]])
+
+        #  Initializing moving circles.
+        self.ax_circle_AS = lib.add_subplot(ax, fig, [0.303, 0.105, 0.7 * 9.0 / 16.0, 0.7])
+        self.RmFrame()
+        self.ax_circle_AS.patch.set_visible(False)  # Remove backgroun
+        self.ax_circle_AS.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
+        self.ax_circle_AS.set_xlim([-10, 10])
+        self.ax_circle_AS.set_ylim([-10, 10])
+        self.ax_circle_AS.set_aspect('auto')
+        self.plt_circle_red_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='r', alpha=self.opacity, zorder=1)
+        self.plt_circle_blue_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='b', alpha=self.opacity, zorder=1)
+        self.plt_circle_yellow_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='y', alpha=self.opacity, zorder=1)
+
+        cid = fig.canvas.mpl_connect('close_event', self.handle_close)
+
+        return animation.FuncAnimation(fig, self.AffectStateWindow_Updatefig, interval=self.interval)
+
+    # =========================
+
     def MainWindow_Updatefig(self, i):
         if rospy.core.is_shutdown() or not self.animate_MainWindow:
             return
@@ -334,6 +367,29 @@ class MiroGI():
 
     # =========================
 
+    def AffectStateWindow_Updatefig(self, i):
+        if rospy.core.is_shutdown():
+            return
+
+        if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
+            self.miro.update_data()
+
+            # Plotting animation
+            self.plt_circle_red_handle_AS.remove()
+            self.plt_circle_blue_handle_AS.remove()
+            self.plt_circle_yellow_handle_AS.remove()
+            self.plt_circle_red_handle_AS = self.ax_circle_AS.scatter(self.miro.emotion.valence * 16.0 - 8.0,
+                                                                self.miro.emotion.arousal * 16.0 - 8.0, s=200, c='r',
+                                                                alpha=self.opacity, zorder=1)
+            self.plt_circle_blue_handle_AS = self.ax_circle_AS.scatter(self.miro.mood.valence * 16.0 - 8.0,
+                                                                 self.miro.mood.arousal * 16.0 - 8.0, s=200, c='b',
+                                                                 alpha=self.opacity, zorder=1)
+            self.plt_circle_yellow_handle_AS = self.ax_circle_AS.scatter(self.miro.sleep.wakefulness * 16.0 - 8.0,
+                                                                   self.miro.sleep.pressure * 16.0 - 8.0, s=200, c='y',
+                                                                   alpha=self.opacity, zorder=1)
+
+    # =========================
+
     # Getting the cursor click position.
     def handle_click(self, event):
         print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
@@ -348,6 +404,11 @@ class MiroGI():
             # OnClick for SpetialAM
             self.animate_MainWindow = False
             self.GPR_Window = self.initGPRWindow()
+            plt.show()
+        elif (995 < event.x and event.x < 1016 and 258 < event.y and event.y < 273):
+            # OnClick for AffectState
+            self.animate_MainWindow = False
+            self.AffectState_Window = self.initAffectStateWindow()
             plt.show()
         elif 383 < event.x and event.x < 694 and 280 < event.y and event.y < 396:
             # OnClick for switching between cameras and pri
