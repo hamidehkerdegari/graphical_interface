@@ -255,7 +255,7 @@ class MiroGI():
 
         cid = fig.canvas.mpl_connect('close_event', self.handle_close)
 
-        return animation.FuncAnimation(fig, self.AffectStateWindow_Updatefig, interval=self.interval) 
+        return animation.FuncAnimation(fig, self.AffectStateWindow_Updatefig, interval=self.interval)
 
     # =========================
 
