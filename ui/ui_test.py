@@ -18,7 +18,7 @@ class Cl_Button(object):
     def __init__(self, text, image, color, hovercolor, x, y, callback):
         self.callback = callback
 
-        self.axButton = plt.axes([x, y, 0.05/1.6, 0.05/1.6])
+        self.axButton = plt.axes([x, y, 0.05/1.6, 0.05/1.6], zorder=2)
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         #axButton.imshow(Im_Button)
@@ -35,7 +35,7 @@ class Cl_Button(object):
 
 class MiroGI():
     def __init__(self):
-        self.show_pri = False
+        self.show_pri = 1
 
         self.interval = 500
         self.screen_size = [800, 450]
@@ -48,7 +48,7 @@ class MiroGI():
         self.img_camr = plt.imread('../documents/camr.png')
         self.img_priw = plt.imread('../documents/priw.jpg')
 
-        self.Main_Window = self.initMainWindow()
+        self.initMainWindow()
         plt.show()
 
     def RmFrame(self):
@@ -168,9 +168,6 @@ class MiroGI():
         self.ax_bioclock.set_aspect('auto')
         self.ax_bioclock_handle = self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
 
-        # cursor = Cursor()
-        cid = fig_main.canvas.mpl_connect('button_press_event', self.handle_click)
-
         # Initialize Buttons.
         Im_Button = plt.imread('../documents/full_screen.png')
         self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.38, self.initSpetialAMWindow)
@@ -179,11 +176,13 @@ class MiroGI():
         #Im_Close = plt.imread('../documents/close.png')
         #self.ButAS = Cl_Button('', Im_Close, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
-        return animation.FuncAnimation(fig_main, self.MainWindow_Updatefig, interval=self.interval)
+        self.Main_anim = animation.FuncAnimation(fig_main, self.MainWindow_Updatefig, interval=self.interval)
 
     #=========================
 
     def initSpetialAMWindow(self):
+        self.show_pri = 1
+
         # Initializing a new window.
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
@@ -200,7 +199,7 @@ class MiroGI():
         ax.set_ylim([0, self.screen_size[1]])
 
         #  Initializing camera left.
-        self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.294, 0.41, 0.15, 0.17])
+        self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.366, 0.27, 0.15*2.0, 0.17*2.0])
         self.RmFrame()
         self.ax_camera_l_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
@@ -208,7 +207,7 @@ class MiroGI():
         self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
-        self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.384, 0.41, 0.15, 0.17])
+        self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.522, 0.27, 0.15*2.0, 0.17*2.0])
         self.RmFrame()
         self.ax_camera_r_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
@@ -216,7 +215,7 @@ class MiroGI():
         self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.img_camr, zorder=1, aspect='auto')
 
         #  Initializing priw.
-        self.ax_priw_SAM = lib.add_subplot(ax, fig, [0.2655, 0.602, 0.3, 0.025])
+        self.ax_priw_SAM = lib.add_subplot(ax, fig, [0.3, 0.63, 0.3*2.0, 0.025*2.0])
         self.RmFrame()
         self.ax_priw_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_priw_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
@@ -225,7 +224,13 @@ class MiroGI():
         #Im_Back = plt.imread('../documents/back.png')
         #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
-        cid = fig.canvas.mpl_connect('close_event', self.handle_close)
+        # Initialize Radio Buttons.
+        Radio_ax = plt.axes([0.05, 0.2, 0.09, 0.15], axisbg='lightgoldenrodyellow', zorder=2)
+        self.radioBut = RadioButtons(Radio_ax, ('Image', 'Priority', 'Mix'))
+        self.radioBut.on_clicked(self.PriSelfunc)
+
+        # Closing event
+        fig.canvas.mpl_connect('close_event', self.handle_close)
 
         self.SAM_anim = animation.FuncAnimation(fig, self.SpetialAMWindow_Updatefig, interval=self.interval)
 
@@ -303,31 +308,39 @@ class MiroGI():
     # =========================
 
     def MainWindow_Updatefig(self, i):
-        global animate_MainWindow
         if rospy.core.is_shutdown() or not animate_MainWindow:
             return
 
-        print 'MainWindow_Updatefig'
         #print 'H:', self.miro.rtc_hrs, 'M:',self.miro.rtc_mins, 'S:',self.miro.rtc_secs, 'skew:',self.miro.rtc_skew
 
         if (self.miro.image_priw is not None):
             self.plt_priw_handle.remove()
             self.plt_priw_handle = self.ax_priw.imshow(self.miro.image_priw[:, :, 0], zorder=1, extent=[0, 320, 0, 16], interpolation='none', cmap='jet')
 
-        if self.show_pri:
+        if self.show_pri == 2:
             if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
                 self.plt_camera_l_handle.remove()
                 self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
 
                 self.plt_camera_r_handle.remove()
                 self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
-        else:
+        elif self.show_pri == 1:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
                 self.plt_camera_l_handle.remove()
                 self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
 
                 self.plt_camera_r_handle.remove()
                 self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+        elif self.show_pri == 0:
+            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None) and \
+               (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
+                self.plt_camera_l_handle.remove()
+                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
+
+                self.plt_camera_r_handle.remove()
+                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
 
 
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
@@ -376,26 +389,34 @@ class MiroGI():
         if rospy.core.is_shutdown():
             return
 
-        print 'SpetialAMWindow_Updatefig'
-
         if (self.miro.image_priw is not None):
             self.plt_priw_handle_SAM.remove()
             self.plt_priw_handle_SAM = self.ax_priw_SAM.imshow(self.miro.image_priw[:, :, 0], zorder=1, extent=[0, 320, 0, 16], interpolation='none', cmap='jet')
 
-        if self.show_pri:
+        if self.show_pri == 2:
             if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
                 self.plt_camera_l_handle_SAM.remove()
                 self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
 
                 self.plt_camera_r_handle_SAM.remove()
                 self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
-        else:
+        elif self.show_pri == 1:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
                 self.plt_camera_l_handle_SAM.remove()
                 self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_caml, zorder=1, aspect='auto')
 
                 self.plt_camera_r_handle_SAM.remove()
                 self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+        elif self.show_pri == 0:
+            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None) and \
+               (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
+                self.plt_camera_l_handle_SAM.remove()
+                self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_caml, zorder=1, aspect='auto')
+                self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
+
+                self.plt_camera_r_handle_SAM.remove()
+                self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+                self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
 
     # =========================
 
@@ -433,20 +454,20 @@ class MiroGI():
                                                                    alpha=self.opacity, zorder=1)
 
     # =========================
-
-    # Getting the cursor click position.
-    def handle_click(self, event):
-        print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-              (event.button, event.x, event.y, event.xdata, event.ydata))
-
-        if 383 < event.x and event.x < 694 and 280 < event.y and event.y < 396:
-            # OnClick for switching between cameras and pri
-            self.show_pri = not self.show_pri
+    # Events handles
+    def PriSelfunc(self, label):
+        if label == 'Priority':
+            self.show_pri = 2
+        if label == 'Image':
+            self.show_pri = 1
+        elif label == 'Mix':
+            self.show_pri = 0
 
     def handle_close(self, event):
         print('Figure closed!')
         global animate_MainWindow
         animate_MainWindow = True
+        self.show_pri = 1
 
 ################################################################
 if __name__ == "__main__":
