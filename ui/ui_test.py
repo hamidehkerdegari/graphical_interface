@@ -383,7 +383,7 @@ class MiroGI():
             ang = np.deg2rad(45)
             self.ax_bioclock_handle = self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
 
-    # =========================
+    # ==========================
 
     def SpetialAMWindow_Updatefig(self, i):
         if rospy.core.is_shutdown():
