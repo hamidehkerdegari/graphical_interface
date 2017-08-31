@@ -16,11 +16,11 @@ class Cl_Button(object):
     def __init__(self, text, image, color, hovercolor, x, y , callback):
         self.callback = callback
 
-        axButton = plt.axes([x, y, 0.05/1.6, 0.05/1.6])
+        self.axButton = plt.axes([x, y, 0.05/1.6, 0.05/1.6])
         for spine in plt.gca().spines.values():  # Get rid of the frame
             spine.set_visible(False)
         #axButton.imshow(Im_Button)
-        self.But = Button(axButton, text, image=image, color=color, hovercolor=hovercolor)
+        self.But = Button(self.axButton, text, image=image, color=color, hovercolor=hovercolor)
         self.But.on_clicked(self.click)
 
     def click(self, event):
