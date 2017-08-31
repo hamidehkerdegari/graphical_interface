@@ -11,9 +11,11 @@ from matplotlib.widgets import Cursor
 from matplotlib.widgets import Button, RadioButtons
 
 # ==============================================================
+global animate_MainWindow
+animate_MainWindow = True
 
 class Cl_Button(object):
-    def __init__(self, text, image, color, hovercolor, x, y , callback):
+    def __init__(self, text, image, color, hovercolor, x, y, callback):
         self.callback = callback
 
         self.axButton = plt.axes([x, y, 0.05/1.6, 0.05/1.6])
@@ -24,7 +26,8 @@ class Cl_Button(object):
         self.But.on_clicked(self.click)
 
     def click(self, event):
-        self.animate_MainWindow = False
+        global animate_MainWindow
+        animate_MainWindow = False
         self.callback()
         plt.show()
 
@@ -33,7 +36,6 @@ class Cl_Button(object):
 class MiroGI():
     def __init__(self):
         self.show_pri = False
-        self.animate_MainWindow = True
 
         self.interval = 500
         self.screen_size = [800, 450]
@@ -58,8 +60,8 @@ class MiroGI():
         fig_main, ax_main = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig_main.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
         pltManager = plt.get_current_fig_manager()
-        pltManager.full_screen_toggle()
-        #pltManager.resize(*pltManager.window.maxsize())  # Make full screen
+        #pltManager.full_screen_toggle()
+        pltManager.resize(*pltManager.window.maxsize())  # Make full screen
         fig_main.canvas.set_window_title('MiRo Graphical Interface')
 
         # Setting the back/static image(s).
@@ -174,8 +176,8 @@ class MiroGI():
         self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.38, self.initSpetialAMWindow)
         self.ButGPR = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.654, 0.762, self.initGPRWindow)
         self.ButAS = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.755, 0.38, self.initAffectStateWindow)
-        Im_Close = plt.imread('../documents/close.png')
-        self.ButAS = Cl_Button('', Im_Close, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
+        #Im_Close = plt.imread('../documents/close.png')
+        #self.ButAS = Cl_Button('', Im_Close, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
         return animation.FuncAnimation(fig_main, self.MainWindow_Updatefig, interval=self.interval)
 
@@ -186,8 +188,8 @@ class MiroGI():
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
         pltManager = plt.get_current_fig_manager()
-        pltManager.full_screen_toggle()
-        #pltManager.resize(*pltManager.window.maxsize())  # Make full screen
+        #pltManager.full_screen_toggle()
+        pltManager.resize(*pltManager.window.maxsize())  # Make full screen
         fig.canvas.set_window_title('Spatial Attention Model')
 
         # Setting the back/static image(s).
@@ -220,12 +222,12 @@ class MiroGI():
         self.ax_priw_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_priw_handle_SAM = self.ax_priw_SAM.imshow(self.img_priw, zorder=1, extent=[0, 320, 0, 16])
 
-        Im_Back = plt.imread('../documents/back.png')
-        self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
+        #Im_Back = plt.imread('../documents/back.png')
+        #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
         cid = fig.canvas.mpl_connect('close_event', self.handle_close)
 
-        return animation.FuncAnimation(fig, self.SpetialAMWindow_Updatefig, interval=self.interval)
+        self.SAM_anim = animation.FuncAnimation(fig, self.SpetialAMWindow_Updatefig, interval=self.interval)
 
     # =========================
 
@@ -234,8 +236,8 @@ class MiroGI():
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
         pltManager = plt.get_current_fig_manager()
-        pltManager.full_screen_toggle()
-        #pltManager.resize(*pltManager.window.maxsize())  # Make full screen
+        #pltManager.full_screen_toggle()
+        pltManager.resize(*pltManager.window.maxsize())  # Make full screen
         fig.canvas.set_window_title('GPR Basal Ganglia Model (branch s/w)')
 
         # Setting the back/static image.
@@ -254,12 +256,12 @@ class MiroGI():
         self.ax_GPRWin.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
         self.plt_GPRWin_handle = self.ax_GPRWin.bar(self.index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
-        Im_Back = plt.imread('../documents/back.png')
-        self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
+        #Im_Back = plt.imread('../documents/back.png')
+        #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
         cid = fig.canvas.mpl_connect('close_event', self.handle_close)
 
-        return animation.FuncAnimation(fig, self.GPRWindow_Updatefig, interval=self.interval)
+        self.GPR_anim = animation.FuncAnimation(fig, self.GPRWindow_Updatefig, interval=self.interval)
 
     # =========================
 
@@ -268,8 +270,8 @@ class MiroGI():
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
         pltManager = plt.get_current_fig_manager()
-        pltManager.full_screen_toggle()
-        #pltManager.resize(*pltManager.window.maxsize())  # Make full screen
+        #pltManager.full_screen_toggle()
+        pltManager.resize(*pltManager.window.maxsize())  # Make full screen
         fig.canvas.set_window_title('Affect & states & dynamics')
 
         # Setting the back/static image.
@@ -291,17 +293,18 @@ class MiroGI():
         self.plt_circle_blue_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='b', alpha=self.opacity, zorder=1)
         self.plt_circle_yellow_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='y', alpha=self.opacity, zorder=1)
 
-        Im_Back = plt.imread('../documents/back.png')
-        self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
+        #Im_Back = plt.imread('../documents/back.png')
+        #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
         cid = fig.canvas.mpl_connect('close_event', self.handle_close)
 
-        return animation.FuncAnimation(fig, self.AffectStateWindow_Updatefig, interval=self.interval)
+        self.AS_anim = animation.FuncAnimation(fig, self.AffectStateWindow_Updatefig, interval=self.interval)
 
     # =========================
 
     def MainWindow_Updatefig(self, i):
-        if rospy.core.is_shutdown() or not self.animate_MainWindow:
+        global animate_MainWindow
+        if rospy.core.is_shutdown() or not animate_MainWindow:
             return
 
         print 'MainWindow_Updatefig'
@@ -442,7 +445,8 @@ class MiroGI():
 
     def handle_close(self, event):
         print('Figure closed!')
-        self.animate_MainWindow = True
+        global animate_MainWindow
+        animate_MainWindow = True
 
 ################################################################
 if __name__ == "__main__":
