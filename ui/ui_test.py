@@ -14,13 +14,17 @@ from matplotlib.widgets import Button, RadioButtons
 global animate_MainWindow
 animate_MainWindow = True
 
+
+def RmFrame():
+    for spine in plt.gca().spines.values():  # Get rid of the frame
+        spine.set_visible(False)
+
 class Cl_Button(object):
     def __init__(self, text, image, color, hovercolor, x, y, callback):
         self.callback = callback
 
         self.axButton = plt.axes([x, y, 0.05/1.6, 0.05/1.6], zorder=2)
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
+        RmFrame()
         #axButton.imshow(Im_Button)
         self.But = Button(self.axButton, text, image=image, color=color, hovercolor=hovercolor)
         self.But.on_clicked(self.click)
@@ -48,14 +52,10 @@ class MiroGI():
         self.img_camr = plt.imread('../documents/camr.png')
         self.img_priw = plt.imread('../documents/priw.jpg')
 
-        self.initMainWindow()
+        self.init_MainWindow()
         plt.show()
 
-    def RmFrame(self):
-        for spine in plt.gca().spines.values():  # Get rid of the frame
-            spine.set_visible(False)
-
-    def initMainWindow(self):
+    def init_MainWindow(self):
         # Initializing the main window.
         fig_main, ax_main = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig_main.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
@@ -75,7 +75,7 @@ class MiroGI():
         self.ax_GPR = lib.add_subplot(ax_main, fig_main, [0.82, 0.61, 0.15, 0.12])
         self.index = np.arange(8)
         self.bar_width = 0.7
-        self.RmFrame()
+        RmFrame()
         self.ax_GPR.patch.set_visible(False)  # Remove backgrounf
         self.ax_GPR.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
         self.ax_GPR.set_xticks(self.index + self.bar_width / 2)
@@ -85,7 +85,7 @@ class MiroGI():
 
         #  Initializing moving circle.
         self.ax_circle = lib.add_subplot(ax_main, fig_main, [0.615, 0.375, 0.3 * 9.0 / 16.0, 0.3])
-        self.RmFrame()
+        RmFrame()
         self.ax_circle.patch.set_visible(False)  # Remove backgrounf
         self.ax_circle.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_circle.set_xlim([-10, 10])
@@ -97,28 +97,28 @@ class MiroGI():
 
         #  Initializing camera left.
         self.ax_camera_l = lib.add_subplot(ax_main, fig_main, [0.294, 0.41, 0.15, 0.17])
-        self.RmFrame()
+        RmFrame()
         self.ax_camera_l.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_l_handle = self.ax_camera_l.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
         self.ax_camera_r = lib.add_subplot(ax_main, fig_main, [0.384, 0.41, 0.15, 0.17])
-        self.RmFrame()
+        RmFrame()
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_r_handle = self.ax_camera_r.imshow(self.img_camr, zorder=1, aspect='auto')
 
         #  Initializing priw.
         self.ax_priw = lib.add_subplot(ax_main, fig_main, [0.2655, 0.602, 0.3, 0.025])
-        self.RmFrame()
+        RmFrame()
         self.ax_priw.patch.set_visible(False)  # Remove backgrounf
         self.ax_priw.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_priw_handle = self.ax_priw.imshow(self.img_priw, zorder=1, extent=[0, 320, 0, 16])
 
         #  Initializing priorities.
         self.ax_priorities = lib.add_subplot(ax_main, fig_main, [0.18, 0.78, 0.28, 0.18])
-        self.RmFrame()
+        RmFrame()
         self.ax_priorities.patch.set_visible(False)  # Remove backgrounf
         self.ax_priorities.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_priorities.set_xlim([0, 30])
@@ -160,7 +160,7 @@ class MiroGI():
         # Initialize Biological Clock time.
         ang = np.deg2rad(45)
         self.ax_bioclock = lib.add_subplot(ax_main, fig_main, [0.523, 0.068, 0.24 * 9.0 / 16.0, 0.24])
-        self.RmFrame()
+        RmFrame()
         self.ax_bioclock.patch.set_visible(False)  # Remove backgrounf
         self.ax_bioclock.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_bioclock.set_xlim([-1, 1])
@@ -170,17 +170,17 @@ class MiroGI():
 
         # Initialize Buttons.
         Im_Button = plt.imread('../documents/full_screen.png')
-        self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.38, self.initSpetialAMWindow)
-        self.ButGPR = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.654, 0.762, self.initGPRWindow)
-        self.ButAS = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.755, 0.38, self.initAffectStateWindow)
+        self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.38, self.init_SpetialAMWindow)
+        self.ButGPR = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.654, 0.762, self.init_GPRWindow)
+        self.ButAS = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.755, 0.38, self.init_AffectStateWindow)
         #Im_Close = plt.imread('../documents/close.png')
         #self.ButAS = Cl_Button('', Im_Close, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
-        self.Main_anim = animation.FuncAnimation(fig_main, self.MainWindow_Updatefig, interval=self.interval)
+        self.Main_anim = animation.FuncAnimation(fig_main, self.update_MainWindow, interval=self.interval)
 
     #=========================
 
-    def initSpetialAMWindow(self):
+    def init_SpetialAMWindow(self):
         self.show_pri = 1
 
         # Initializing a new window.
@@ -200,7 +200,7 @@ class MiroGI():
 
         #  Initializing camera left.
         self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.366, 0.27, 0.15*2.0, 0.17*2.0])
-        self.RmFrame()
+        RmFrame()
         self.ax_camera_l_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
                                      labelbottom='off')
@@ -208,7 +208,7 @@ class MiroGI():
 
         #  Initializing camera right.
         self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.522, 0.27, 0.15*2.0, 0.17*2.0])
-        self.RmFrame()
+        RmFrame()
         self.ax_camera_r_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
                                      labelbottom='off')
@@ -216,7 +216,7 @@ class MiroGI():
 
         #  Initializing priw.
         self.ax_priw_SAM = lib.add_subplot(ax, fig, [0.3, 0.63, 0.3*2.0, 0.025*2.0])
-        self.RmFrame()
+        RmFrame()
         self.ax_priw_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_priw_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_priw_handle_SAM = self.ax_priw_SAM.imshow(self.img_priw, zorder=1, extent=[0, 320, 0, 16])
@@ -227,16 +227,16 @@ class MiroGI():
         # Initialize Radio Buttons.
         Radio_ax = plt.axes([0.05, 0.2, 0.09, 0.15], axisbg='lightgoldenrodyellow', zorder=2)
         self.radioBut = RadioButtons(Radio_ax, ('Image', 'Priority', 'Mix'))
-        self.radioBut.on_clicked(self.PriSelfunc)
+        self.radioBut.on_clicked(self.callback_PriSelect)
 
         # Closing event
-        fig.canvas.mpl_connect('close_event', self.handle_close)
+        fig.canvas.mpl_connect('close_event', self.callback_WinClose)
 
-        self.SAM_anim = animation.FuncAnimation(fig, self.SpetialAMWindow_Updatefig, interval=self.interval)
+        self.SAM_anim = animation.FuncAnimation(fig, self.update_SpetialAMWindow, interval=self.interval)
 
     # =========================
 
-    def initGPRWindow(self):
+    def init_GPRWindow(self):
         # Initializing a new window.
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
@@ -254,7 +254,7 @@ class MiroGI():
 
         # Initializing the GPR plot.
         self.ax_GPRWin = lib.add_subplot(ax, fig, [0.82, 0.61, 0.15, 0.12])
-        self.RmFrame()
+        RmFrame()
         self.ax_GPRWin.patch.set_visible(False)  # Remove backgrounf
         self.ax_GPRWin.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
         self.ax_GPRWin.set_xticks(self.index + self.bar_width / 2)
@@ -264,13 +264,13 @@ class MiroGI():
         #Im_Back = plt.imread('../documents/back.png')
         #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
-        cid = fig.canvas.mpl_connect('close_event', self.handle_close)
+        cid = fig.canvas.mpl_connect('close_event', self.callback_WinClose)
 
-        self.GPR_anim = animation.FuncAnimation(fig, self.GPRWindow_Updatefig, interval=self.interval)
+        self.GPR_anim = animation.FuncAnimation(fig, self.update_GPRWindow, interval=self.interval)
 
     # =========================
 
-    def initAffectStateWindow(self):
+    def init_AffectStateWindow(self):
         # Initializing a new window.
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
         fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
@@ -288,7 +288,7 @@ class MiroGI():
 
         #  Initializing moving circles.
         self.ax_circle_AS = lib.add_subplot(ax, fig, [0.303, 0.105, 0.7 * 9.0 / 16.0, 0.7])
-        self.RmFrame()
+        RmFrame()
         self.ax_circle_AS.patch.set_visible(False)  # Remove backgroun
         self.ax_circle_AS.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.ax_circle_AS.set_xlim([-10, 10])
@@ -301,13 +301,13 @@ class MiroGI():
         #Im_Back = plt.imread('../documents/back.png')
         #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
-        cid = fig.canvas.mpl_connect('close_event', self.handle_close)
+        cid = fig.canvas.mpl_connect('close_event', self.callback_WinClose)
 
-        self.AS_anim = animation.FuncAnimation(fig, self.AffectStateWindow_Updatefig, interval=self.interval)
+        self.AS_anim = animation.FuncAnimation(fig, self.update_AffectStateWindow, interval=self.interval)
 
     # =========================
 
-    def MainWindow_Updatefig(self, i):
+    def update_MainWindow(self, i):
         if rospy.core.is_shutdown() or not animate_MainWindow:
             return
 
@@ -385,7 +385,7 @@ class MiroGI():
 
     # ==========================
 
-    def SpetialAMWindow_Updatefig(self, i):
+    def update_SpetialAMWindow(self, i):
         if rospy.core.is_shutdown():
             return
 
@@ -420,7 +420,7 @@ class MiroGI():
 
     # =========================
 
-    def GPRWindow_Updatefig(self, i):
+    def update_GPRWindow(self, i):
         if rospy.core.is_shutdown():
             return
 
@@ -432,7 +432,7 @@ class MiroGI():
 
     # =========================
 
-    def AffectStateWindow_Updatefig(self, i):
+    def update_AffectStateWindow(self, i):
         if rospy.core.is_shutdown():
             return
 
@@ -455,7 +455,7 @@ class MiroGI():
 
     # =========================
     # Events handles
-    def PriSelfunc(self, label):
+    def callback_PriSelect(self, label):
         if label == 'Priority':
             self.show_pri = 2
         if label == 'Image':
@@ -463,7 +463,7 @@ class MiroGI():
         elif label == 'Mix':
             self.show_pri = 0
 
-    def handle_close(self, event):
+    def callback_WinClose(self, event):
         print('Figure closed!')
         global animate_MainWindow
         animate_MainWindow = True
