@@ -14,7 +14,6 @@ from matplotlib.widgets import Button, RadioButtons
 global animate_MainWindow
 animate_MainWindow = True
 
-
 def RmFrame():
     for spine in plt.gca().spines.values():  # Get rid of the frame
         spine.set_visible(False)
@@ -173,6 +172,8 @@ class MiroGI():
         self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.38, self.init_SpetialAMWindow)
         self.ButGPR = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.654, 0.762, self.init_GPRWindow)
         self.ButAS = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.755, 0.38, self.init_AffectStateWindow)
+
+        # Close Button
         #Im_Close = plt.imread('../documents/close.png')
         #self.ButAS = Cl_Button('', Im_Close, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
@@ -221,6 +222,7 @@ class MiroGI():
         self.ax_priw_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_priw_handle_SAM = self.ax_priw_SAM.imshow(self.img_priw, zorder=1, extent=[0, 320, 0, 16])
 
+        # Back Button
         #Im_Back = plt.imread('../documents/back.png')
         #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
@@ -261,6 +263,7 @@ class MiroGI():
         self.ax_GPRWin.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
         self.plt_GPRWin_handle = self.ax_GPRWin.bar(self.index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
+        # Back Button
         #Im_Back = plt.imread('../documents/back.png')
         #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
@@ -298,6 +301,7 @@ class MiroGI():
         self.plt_circle_blue_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='b', alpha=self.opacity, zorder=1)
         self.plt_circle_yellow_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='y', alpha=self.opacity, zorder=1)
 
+        # Back Button
         #Im_Back = plt.imread('../documents/back.png')
         #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
@@ -454,7 +458,7 @@ class MiroGI():
                                                                    alpha=self.opacity, zorder=1)
 
     # =========================
-    # Events handles
+    # Events callback functions.
     def callback_PriSelect(self, label):
         if label == 'Priority':
             self.show_pri = 2
