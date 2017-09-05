@@ -9,6 +9,7 @@ import matplotlib.animation as animation
 import numpy as np
 from matplotlib.widgets import Cursor
 from matplotlib.widgets import Button, RadioButtons
+import matplotlib.patches as patches
 
 # ==============================================================
 global animate_MainWindow
@@ -40,7 +41,7 @@ class MiroGI():
     def __init__(self):
         self.show_pri = 1
 
-        self.interval = 500
+        self.interval = 200
         self.screen_size = [800, 450]
         self.opacity = 1.0
 
@@ -62,6 +63,7 @@ class MiroGI():
         #pltManager.full_screen_toggle()
         pltManager.resize(*pltManager.window.maxsize())  # Make full screen
         fig_main.canvas.set_window_title('MiRo Graphical Interface')
+        fig_main.canvas.draw()
 
         # Setting the back/static image(s).
         img_back = plt.imread('../documents/biomimetic_core.png')
@@ -99,14 +101,15 @@ class MiroGI():
         RmFrame()
         self.ax_camera_l.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
-        self.plt_camera_l_handle = self.ax_camera_l.imshow(self.img_caml, zorder=1, aspect='auto')
+        self.plt_camera_l_handle = self.ax_camera_l.imshow(self.img_caml, zorder=1, alpha=1, aspect='auto')
+
 
         #  Initializing camera right.
         self.ax_camera_r = lib.add_subplot(ax_main, fig_main, [0.384, 0.41, 0.15, 0.17])
         RmFrame()
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
-        self.plt_camera_r_handle = self.ax_camera_r.imshow(self.img_camr, zorder=1, aspect='auto')
+        self.plt_camera_r_handle = self.ax_camera_r.imshow(self.img_camr, zorder=1, alpha=1, aspect='auto')
 
         #  Initializing priw.
         self.ax_priw = lib.add_subplot(ax_main, fig_main, [0.2655, 0.602, 0.3, 0.025])
@@ -157,7 +160,7 @@ class MiroGI():
         self.ax_priorities.text(26.6, 3.0, "A8", size=20, ha="center", va="center", zorder=2)
 
         # Initialize Biological Clock time.
-        ang = np.deg2rad(45)
+        ang = np.deg2rad(0)
         self.ax_bioclock = lib.add_subplot(ax_main, fig_main, [0.523, 0.068, 0.24 * 9.0 / 16.0, 0.24])
         RmFrame()
         self.ax_bioclock.patch.set_visible(False)  # Remove backgrounf
@@ -165,7 +168,9 @@ class MiroGI():
         self.ax_bioclock.set_xlim([-1, 1])
         self.ax_bioclock.set_ylim([-1, 1])
         self.ax_bioclock.set_aspect('auto')
-        self.ax_bioclock_handle = self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
+        #self.ax_bioclock_handle = self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
+        self.ax_bioclock_handle = patches.FancyArrowPatch((0.0, 0.0), (np.cos(ang) * 0.7, np.sin(ang) * 0.7), arrowstyle='wedge', mutation_scale=10, facecolor='k')
+        self.ax_bioclock.add_patch(self.ax_bioclock_handle)
 
         # Initialize Buttons.
         Im_Button = plt.imread('../documents/full_screen.png')
@@ -203,16 +208,14 @@ class MiroGI():
         self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.366, 0.27, 0.15*2.0, 0.17*2.0])
         RmFrame()
         self.ax_camera_l_SAM.patch.set_visible(False)  # Remove backgrounf
-        self.ax_camera_l_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
-                                     labelbottom='off')
+        self.ax_camera_l_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
         self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.522, 0.27, 0.15*2.0, 0.17*2.0])
         RmFrame()
         self.ax_camera_r_SAM.patch.set_visible(False)  # Remove backgrounf
-        self.ax_camera_r_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off',
-                                     labelbottom='off')
+        self.ax_camera_r_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.img_camr, zorder=1, aspect='auto')
 
         #  Initializing priw.
@@ -318,74 +321,74 @@ class MiroGI():
         #print 'H:', self.miro.rtc_hrs, 'M:',self.miro.rtc_mins, 'S:',self.miro.rtc_secs, 'skew:',self.miro.rtc_skew
 
         if (self.miro.image_priw is not None):
-            self.plt_priw_handle.remove()
-            self.plt_priw_handle = self.ax_priw.imshow(self.miro.image_priw[:, :, 0], zorder=1, extent=[0, 320, 0, 16], interpolation='none', cmap='jet')
+            self.plt_priw_handle.set_data(self.miro.image_priw[:, :, 0])
 
         if self.show_pri == 2:
             if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle.remove()
-                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
-
-                self.plt_camera_r_handle.remove()
-                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
+                self.plt_camera_l_handle.set_data(self.miro.image_pril[:, :, 0])
+                self.plt_camera_r_handle.set_data(self.miro.image_prir[:, :, 0])
         elif self.show_pri == 1:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
-                self.plt_camera_l_handle.remove()
-                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
-
-                self.plt_camera_r_handle.remove()
-                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+                self.plt_camera_l_handle.set_data(self.miro.image_caml)
+                self.plt_camera_r_handle.set_data(self.miro.image_camr)
         elif self.show_pri == 0:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None) and \
                (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle.remove()
-                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_caml, zorder=1, aspect='auto')
-                self.plt_camera_l_handle = self.ax_camera_l.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
-
-                self.plt_camera_r_handle.remove()
-                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_camr, zorder=1, aspect='auto')
-                self.plt_camera_r_handle = self.ax_camera_r.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
+                self.plt_camera_l_handle.set_data(self.miro.image_caml)
+                self.plt_camera_r_handle.set_data(self.miro.image_camr)
 
 
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
             self.miro.update_data()
 
             # Plotting animation
-            self.plt_circle_red_handle.remove()
-            self.plt_circle_blue_handle.remove()
-            self.plt_circle_yellow_handle.remove()
-            x = self.miro.accel_head.x
-            y = self.miro.accel_head.y
-            self.plt_circle_red_handle = self.ax_circle.scatter(self.miro.emotion.valence*16.0-8.0, self.miro.emotion.arousal*16.0-8.0, s=200, c='r', alpha=self.opacity, zorder=1)
-            self.plt_circle_blue_handle = self.ax_circle.scatter(self.miro.mood.valence*16.0-8.0, self.miro.mood.arousal*16.0-8.0, s=200, c='b', alpha=self.opacity, zorder=1)
-            self.plt_circle_yellow_handle = self.ax_circle.scatter(self.miro.sleep.wakefulness*16.0-8.0, self.miro.sleep.pressure*16.0-8.0, s=200, c='y', alpha=self.opacity, zorder=1)
+            self.plt_circle_red_handle.set_offsets([self.miro.emotion.valence * 16.0 - 8.0, self.miro.emotion.arousal * 16.0 - 8.0])
+            self.plt_circle_blue_handle.set_offsets([self.miro.mood.valence*16.0-8.0, self.miro.mood.arousal*16.0-8.0])
+            self.plt_circle_yellow_handle.set_offsets([self.miro.sleep.wakefulness*16.0-8.0, self.miro.sleep.pressure*16.0-8.0])
 
-            self.plt_GPR_handle.remove()
-            self.plt_GPR_handle = self.ax_GPR.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+            # Updating GPR
+            for bar, h in zip(self.plt_GPR_handle, self.miro.selection):
+                bar.set_height(h)
 
+            # Updating priority
             p = self.miro.priority
             d = self.miro.disinhibition
-            self.plt_priority_1_handle.remove()
-            self.plt_priority_2_handle.remove()
-            self.plt_priority_3_handle.remove()
-            self.plt_priority_4_handle.remove()
-            self.plt_priority_5_handle.remove()
-            self.plt_priority_6_handle.remove()
-            self.plt_priority_7_handle.remove()
-            self.plt_priority_8_handle.remove()
-            self.plt_priority_1_handle = self.ax_priorities.scatter(3.80, 5.8, s=1600, c='r', linewidths=3*d[0], edgecolor='k', alpha=p[0], zorder=1)
-            self.plt_priority_2_handle = self.ax_priorities.scatter(7.00, 3.0, s=1600, c='r', linewidths=3*d[1], edgecolor='k', alpha=p[1], zorder=1)
-            self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=3*d[2], edgecolor='k', alpha=p[2], zorder=1)
-            self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=3*d[3], edgecolor='k', alpha=p[3], zorder=1)
-            self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=3*d[4], edgecolor='k', alpha=p[4], zorder=1)
-            self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=3*d[5], edgecolor='k', alpha=p[5], zorder=1)
-            self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=3*d[6], edgecolor='k', alpha=p[6], zorder=1)
-            self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=3*d[7], edgecolor='k', alpha=p[7], zorder=1)
+            self.plt_priority_1_handle.set_linewidths(3 * d[0])
+            self.plt_priority_1_handle.set_alpha(p[0])
 
-            # Initialize Biological Clock time.
-            self.ax_bioclock_handle.remove()
+            self.plt_priority_2_handle.set_linewidths(3 * d[1])
+            self.plt_priority_2_handle.set_alpha(p[1])
+
+            self.plt_priority_3_handle.set_linewidths(3 * d[2])
+            self.plt_priority_3_handle.set_alpha(p[2])
+
+            self.plt_priority_4_handle.set_linewidths(3 * d[3])
+            self.plt_priority_4_handle.set_alpha(p[3])
+
+            self.plt_priority_5_handle.set_linewidths(3 * d[4])
+            self.plt_priority_5_handle.set_alpha(p[4])
+
+            self.plt_priority_6_handle.set_linewidths(3 * d[5])
+            self.plt_priority_6_handle.set_alpha(p[5])
+
+            self.plt_priority_7_handle.set_linewidths(3 * d[6])
+            self.plt_priority_7_handle.set_alpha(p[6])
+
+            self.plt_priority_8_handle.set_linewidths(3 * d[7])
+            self.plt_priority_8_handle.set_alpha(p[7])
+
+            #self.plt_priority_1_handle = self.ax_priorities.scatter(3.80, 5.8, s=1600, c='r', linewidths=3*d[0], edgecolor='k', alpha=p[0], zorder=1)
+            #self.plt_priority_2_handle = self.ax_priorities.scatter(7.00, 3.0, s=1600, c='r', linewidths=3*d[1], edgecolor='k', alpha=p[1], zorder=1)
+            #self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=3*d[2], edgecolor='k', alpha=p[2], zorder=1)
+            #self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=3*d[3], edgecolor='k', alpha=p[3], zorder=1)
+            #self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=3*d[4], edgecolor='k', alpha=p[4], zorder=1)
+            #self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=3*d[5], edgecolor='k', alpha=p[5], zorder=1)
+            #self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=3*d[6], edgecolor='k', alpha=p[6], zorder=1)
+            #self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=3*d[7], edgecolor='k', alpha=p[7], zorder=1)
+
+            # Updating Biological Clock time.
             ang = np.deg2rad(45)
-            self.ax_bioclock_handle = self.ax_bioclock.arrow(0, 0, np.cos(ang) * 0.7, np.sin(ang) * 0.7, head_width=0.05, head_length=0.1, fc='k', ec='k')
+            self.ax_bioclock_handle.set_positions((0.0, 0.0), (np.cos(ang) * 0.7, np.sin(ang) * 0.7))
 
     # ==========================
 
@@ -394,33 +397,24 @@ class MiroGI():
             return
 
         if (self.miro.image_priw is not None):
-            self.plt_priw_handle_SAM.remove()
-            self.plt_priw_handle_SAM = self.ax_priw_SAM.imshow(self.miro.image_priw[:, :, 0], zorder=1, extent=[0, 320, 0, 16], interpolation='none', cmap='jet')
+            self.plt_priw_handle_SAM.set_data(self.miro.image_priw[:, :, 0])
 
         if self.show_pri == 2:
             if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle_SAM.remove()
-                self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
-
-                self.plt_camera_r_handle_SAM.remove()
-                self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=1, aspect='auto', interpolation='gaussian', cmap='jet')
+                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril[:, :, 0])
+                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir[:, :, 0])
         elif self.show_pri == 1:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
-                self.plt_camera_l_handle_SAM.remove()
-                self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_caml, zorder=1, aspect='auto')
-
-                self.plt_camera_r_handle_SAM.remove()
-                self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_camr, zorder=1, aspect='auto')
+                self.plt_camera_l_handle_SAM.set_data(self.miro.image_caml)
+                self.plt_camera_r_handle_SAM.set_data(self.miro.image_camr)
         elif self.show_pri == 0:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None) and \
                (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle_SAM.remove()
-                self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_caml, zorder=1, aspect='auto')
-                self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.miro.image_pril[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
+                self.plt_camera_l_handle_SAM.set_data(self.miro.image_caml)
+                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril[:, :, 0])
 
-                self.plt_camera_r_handle_SAM.remove()
-                self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_camr, zorder=1, aspect='auto')
-                self.plt_camera_r_handle_SAM = self.ax_camera_r_SAM.imshow(self.miro.image_prir[:, :, 0], zorder=1, alpha=0.3, aspect='auto', interpolation='gaussian', cmap='jet')
+                self.plt_camera_r_handle_SAM.set_data(self.miro.image_camr)
+                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir[:, :, 0])
 
     # =========================
 
@@ -431,8 +425,8 @@ class MiroGI():
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
             self.miro.update_data()
 
-            self.plt_GPRWin_handle.remove()
-            self.plt_GPRWin_handle = self.ax_GPRWin.bar(self.index, self.miro.selection, self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+            for bar, h in zip(self.plt_GPRWin_handle, self.miro.selection):
+                bar.set_height(h)
 
     # =========================
 
@@ -444,18 +438,9 @@ class MiroGI():
             self.miro.update_data()
 
             # Plotting animation
-            self.plt_circle_red_handle_AS.remove()
-            self.plt_circle_blue_handle_AS.remove()
-            self.plt_circle_yellow_handle_AS.remove()
-            self.plt_circle_red_handle_AS = self.ax_circle_AS.scatter(self.miro.emotion.valence * 16.0 - 8.0,
-                                                                self.miro.emotion.arousal * 16.0 - 8.0, s=200, c='r',
-                                                                alpha=self.opacity, zorder=1)
-            self.plt_circle_blue_handle_AS = self.ax_circle_AS.scatter(self.miro.mood.valence * 16.0 - 8.0,
-                                                                 self.miro.mood.arousal * 16.0 - 8.0, s=200, c='b',
-                                                                 alpha=self.opacity, zorder=1)
-            self.plt_circle_yellow_handle_AS = self.ax_circle_AS.scatter(self.miro.sleep.wakefulness * 16.0 - 8.0,
-                                                                   self.miro.sleep.pressure * 16.0 - 8.0, s=200, c='y',
-                                                                   alpha=self.opacity, zorder=1)
+            self.plt_circle_red_handle_AS.set_offsets([self.miro.emotion.valence * 16.0 - 8.0, self.miro.emotion.arousal * 16.0 - 8.0])
+            self.plt_circle_blue_handle_AS.set_offsets([self.miro.mood.valence * 16.0 - 8.0, self.miro.mood.arousal * 16.0 - 8.0])
+            self.plt_circle_yellow_handle_AS.set_offsets([self.miro.sleep.wakefulness * 16.0 - 8.0, self.miro.sleep.pressure * 16.0 - 8.0])
 
     # =========================
     # Events callback functions.
