@@ -54,6 +54,11 @@ class MiroGI():
         self.img_camr = plt.imread('../documents/camr.png')
         self.img_priw = plt.imread('../documents/priw.jpg')
 
+        self.img_back_main = plt.imread('../documents/biomimetic_core.png')
+        self.img_back_SAM = plt.imread('../documents/SpetialAM.png')
+        self.img_back_GPR = plt.imread('../documents/GPRWindow.png')
+        self.img_back_AS = plt.imread('../documents/affect_state.png')
+
         self.init_MainWindow()
         plt.show()
 
@@ -68,8 +73,7 @@ class MiroGI():
         fig_main.canvas.draw()
 
         # Setting the back/static image(s).
-        img_back = plt.imread('../documents/biomimetic_core.png')
-        ax_main.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax_main.imshow(self.img_back_main, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
         ax_main.axis('off')  # clear x- and y-axes
         ax_main.set_xlim([0, self.screen_size[0]])
         ax_main.set_ylim([0, self.screen_size[1]])
@@ -99,7 +103,8 @@ class MiroGI():
         self.plt_circle_yellow_handle = self.ax_circle.scatter(0, 0, s=200, c='y', alpha=self.opacity, zorder=1)
 
         #  Initializing camera left.
-        self.ax_camera_l = lib.add_subplot(ax_main, fig_main, [0.294, 0.41, 0.15, 0.17])
+        #self.ax_camera_l = lib.add_subplot(ax_main, fig_main, [0.294, 0.41, 0.15, 0.17])
+        self.ax_camera_l = lib.add_subplot(ax_main, fig_main, [0.265, 0.41, 0.15, 0.17])
         RmFrame()
         self.ax_camera_l.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
@@ -107,7 +112,8 @@ class MiroGI():
 
 
         #  Initializing camera right.
-        self.ax_camera_r = lib.add_subplot(ax_main, fig_main, [0.384, 0.41, 0.15, 0.17])
+        #self.ax_camera_r = lib.add_subplot(ax_main, fig_main, [0.384, 0.41, 0.15, 0.17])
+        self.ax_camera_r = lib.add_subplot(ax_main, fig_main, [0.42, 0.41, 0.15, 0.17])
         RmFrame()
         self.ax_camera_r.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
@@ -176,7 +182,7 @@ class MiroGI():
 
         # Initialize Buttons.
         Im_Button = plt.imread('../documents/full_screen.png')
-        self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.38, self.init_SpetialAMWindow)
+        self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.375, self.init_SpetialAMWindow)
         self.ButGPR = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.654, 0.762, self.init_GPRWindow)
         self.ButAS = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.755, 0.38, self.init_AffectStateWindow)
 
@@ -200,21 +206,22 @@ class MiroGI():
         fig.canvas.set_window_title('Spatial Attention Model')
 
         # Setting the back/static image(s).
-        img_back = plt.imread('../documents/SpetialAM.png')
-        ax.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax.imshow(self.img_back_SAM, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
         ax.axis('off')  # clear x- and y-axes
         ax.set_xlim([0, self.screen_size[0]])
         ax.set_ylim([0, self.screen_size[1]])
 
         #  Initializing camera left.
-        self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.366, 0.27, 0.15*2.0, 0.17*2.0])
+        #self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.366, 0.27, 0.15 * 2.0, 0.17 * 2.0])
+        self.ax_camera_l_SAM = lib.add_subplot(ax, fig, [0.308, 0.27, 0.15 * 1.91, 0.17 * 1.91])
         RmFrame()
         self.ax_camera_l_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_l_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
         self.plt_camera_l_handle_SAM = self.ax_camera_l_SAM.imshow(self.img_caml, zorder=1, aspect='auto')
 
         #  Initializing camera right.
-        self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.522, 0.27, 0.15*2.0, 0.17*2.0])
+        #self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.522, 0.27, 0.15 * 2.0, 0.17 * 2.0])
+        self.ax_camera_r_SAM = lib.add_subplot(ax, fig, [0.607, 0.27, 0.15 * 1.91, 0.17 * 1.91])
         RmFrame()
         self.ax_camera_r_SAM.patch.set_visible(False)  # Remove backgrounf
         self.ax_camera_r_SAM.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
@@ -232,8 +239,8 @@ class MiroGI():
         #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
 
         # Initialize Radio Buttons.
-        Radio_ax = plt.axes([0.05, 0.2, 0.09, 0.15], axisbg='lightgoldenrodyellow', zorder=2)
-        self.radioBut = RadioButtons(Radio_ax, ('Image', 'Priority', 'Mix'))
+        Radio_ax = plt.axes([0.32, 0.19, 0.09, 0.07], axisbg='lightgoldenrodyellow', zorder=2)
+        self.radioBut = RadioButtons(Radio_ax, ('Image', 'Priority'))
         self.radioBut.on_clicked(self.callback_PriSelect)
 
         # Closing event
@@ -253,14 +260,13 @@ class MiroGI():
         fig.canvas.set_window_title('GPR Basal Ganglia Model (branch s/w)')
 
         # Setting the back/static image.
-        img_back = plt.imread('../documents/GPRWindow.png')
-        ax.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax.imshow(self.img_back_GPR, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
         ax.axis('off')  # clear x- and y-axes
         ax.set_xlim([0, self.screen_size[0]])
         ax.set_ylim([0, self.screen_size[1]])
 
         # Initializing the GPR plot.
-        self.ax_GPRWin = lib.add_subplot(ax, fig, [0.82, 0.61, 0.15, 0.12])
+        self.ax_GPRWin = lib.add_subplot(ax, fig, [0.64, 0.21, 0.15*2.0, 0.12*2.0])
         RmFrame()
         self.ax_GPRWin.patch.set_visible(False)  # Remove backgrounf
         self.ax_GPRWin.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
@@ -288,9 +294,7 @@ class MiroGI():
         fig.canvas.set_window_title('Affect & states & dynamics')
 
         # Setting the back/static image.
-        img_back = plt.imread('../documents/affect_state.png')
-        #img_back = gaussian_filter(img_back, sigma=10)
-        ax.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax.imshow(self.img_back_AS, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
         ax.axis('off')  # clear x- and y-axes
         ax.set_xlim([0, self.screen_size[0]])
         ax.set_ylim([0, self.screen_size[1]])
@@ -303,9 +307,9 @@ class MiroGI():
         self.ax_circle_AS.set_xlim([-10, 10])
         self.ax_circle_AS.set_ylim([-10, 10])
         self.ax_circle_AS.set_aspect('auto')
-        self.plt_circle_red_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='r', alpha=self.opacity, zorder=1)
-        self.plt_circle_blue_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='b', alpha=self.opacity, zorder=1)
-        self.plt_circle_yellow_handle_AS = self.ax_circle_AS.scatter(0, 0, s=200, c='y', alpha=self.opacity, zorder=1)
+        self.plt_circle_red_handle_AS = self.ax_circle_AS.scatter(0, 0, s=600, c='r', alpha=self.opacity, zorder=1)
+        self.plt_circle_blue_handle_AS = self.ax_circle_AS.scatter(0, 0, s=600, c='b', alpha=self.opacity, zorder=1)
+        self.plt_circle_yellow_handle_AS = self.ax_circle_AS.scatter(0, 0, s=600, c='y', alpha=self.opacity, zorder=1)
 
         # Back Button
         #Im_Back = plt.imread('../documents/back.png')
@@ -328,8 +332,8 @@ class MiroGI():
 
         if self.show_pri == 2:
             if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle.set_data(self.miro.image_pril[:, :, 0])
-                self.plt_camera_r_handle.set_data(self.miro.image_prir[:, :, 0])
+                self.plt_camera_l_handle.set_data(self.miro.image_pril)
+                self.plt_camera_r_handle.set_data(self.miro.image_prir)
         elif self.show_pri == 1:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
                 self.plt_camera_l_handle.set_data(self.miro.image_caml)
@@ -381,8 +385,8 @@ class MiroGI():
             self.plt_priority_8_handle.set_alpha(p[7])
 
             # Updating Biological Clock time.
-            print('rtc_hrs =', self.miro.rtc_hrs)
-            ang = np.deg2rad(self.miro.rtc_hrs*360/24)
+            print(self.miro.rtc_hrs, self.miro.rtc_mins, self.miro.rtc_secs)
+            ang = np.deg2rad(270-(self.miro.rtc_hrs*360.0/24.0))
             self.ax_bioclock_handle.set_positions((0.0, 0.0), (np.cos(ang) * 0.7, np.sin(ang) * 0.7))
 
     # ==========================
@@ -396,8 +400,8 @@ class MiroGI():
 
         if self.show_pri == 2:
             if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril[:, :, 0])
-                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir[:, :, 0])
+                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril)
+                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir)
         elif self.show_pri == 1:
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
                 self.plt_camera_l_handle_SAM.set_data(self.miro.image_caml)
@@ -406,10 +410,10 @@ class MiroGI():
             if (self.miro.image_caml is not None) and (self.miro.image_camr is not None) and \
                (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
                 self.plt_camera_l_handle_SAM.set_data(self.miro.image_caml)
-                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril[:, :, 0])
+                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril)
 
                 self.plt_camera_r_handle_SAM.set_data(self.miro.image_camr)
-                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir[:, :, 0])
+                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir)
 
     # =========================
 
@@ -442,10 +446,10 @@ class MiroGI():
     def callback_PriSelect(self, label):
         if label == 'Priority':
             self.show_pri = 2
-        if label == 'Image':
+        elif label == 'Image':
             self.show_pri = 1
-        elif label == 'Mix':
-            self.show_pri = 0
+        #elif label == 'Mix':
+        #    self.show_pri = 0
 
     def callback_WinClose(self, event):
         print('Figure closed!')
