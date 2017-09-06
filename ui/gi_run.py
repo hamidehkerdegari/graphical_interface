@@ -10,10 +10,13 @@ import numpy as np
 from matplotlib.widgets import Cursor
 from matplotlib.widgets import Button, RadioButtons
 import matplotlib.patches as patches
+from scipy.ndimage.filters import gaussian_filter
 
 # ==============================================================
 global animate_MainWindow
 animate_MainWindow = True
+
+UpdateRate = 5  # Updating Rate in Hz
 
 def RmFrame():
     for spine in plt.gca().spines.values():  # Get rid of the frame
@@ -40,8 +43,7 @@ class Cl_Button(object):
 class MiroGI():
     def __init__(self):
         self.show_pri = 1
-
-        self.interval = 200
+        self.interval = 1000/UpdateRate
         self.screen_size = [800, 450]
         self.opacity = 1.0
 
@@ -287,6 +289,7 @@ class MiroGI():
 
         # Setting the back/static image.
         img_back = plt.imread('../documents/affect_state.png')
+        #img_back = gaussian_filter(img_back, sigma=10)
         ax.imshow(img_back, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
         ax.axis('off')  # clear x- and y-axes
         ax.set_xlim([0, self.screen_size[0]])
@@ -377,17 +380,9 @@ class MiroGI():
             self.plt_priority_8_handle.set_linewidths(3 * d[7])
             self.plt_priority_8_handle.set_alpha(p[7])
 
-            #self.plt_priority_1_handle = self.ax_priorities.scatter(3.80, 5.8, s=1600, c='r', linewidths=3*d[0], edgecolor='k', alpha=p[0], zorder=1)
-            #self.plt_priority_2_handle = self.ax_priorities.scatter(7.00, 3.0, s=1600, c='r', linewidths=3*d[1], edgecolor='k', alpha=p[1], zorder=1)
-            #self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=3*d[2], edgecolor='k', alpha=p[2], zorder=1)
-            #self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=3*d[3], edgecolor='k', alpha=p[3], zorder=1)
-            #self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=3*d[4], edgecolor='k', alpha=p[4], zorder=1)
-            #self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=3*d[5], edgecolor='k', alpha=p[5], zorder=1)
-            #self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=3*d[6], edgecolor='k', alpha=p[6], zorder=1)
-            #self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=3*d[7], edgecolor='k', alpha=p[7], zorder=1)
-
             # Updating Biological Clock time.
-            ang = np.deg2rad(45)
+            print('rtc_hrs =', self.miro.rtc_hrs)
+            ang = np.deg2rad(self.miro.rtc_hrs*360/24)
             self.ax_bioclock_handle.set_positions((0.0, 0.0), (np.cos(ang) * 0.7, np.sin(ang) * 0.7))
 
     # ==========================
