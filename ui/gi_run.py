@@ -16,7 +16,7 @@ from scipy.ndimage.filters import gaussian_filter
 global animate_MainWindow
 animate_MainWindow = True
 
-UpdateRate = 5  # Updating Rate in Hz
+UpdateRate = 20  # Updating Rate in Hz
 
 def RmFrame():
     for spine in plt.gca().spines.values():  # Get rid of the frame
