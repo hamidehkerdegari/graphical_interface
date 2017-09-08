@@ -201,7 +201,7 @@ class fifo:
 
                 self.buf[self.w] = pb
             else:
-                print("**** frame dropped ****")
+                #print("**** frame dropped ****")
                 pass
             self.tt[self.ti] = t_frm
             ti_bak = self.ti - self.td

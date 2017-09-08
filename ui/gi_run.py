@@ -371,8 +371,6 @@ class MiroGI():
         if rospy.core.is_shutdown() or not animate_MainWindow:
             return
 
-        print '\r\rMain Window Update ==='
-
         priw = self.miro.priw_fifo.latest()
         if (priw is not None):
             self.plt_priw_handle.set_data(priw[:, :, 0])
@@ -380,25 +378,20 @@ class MiroGI():
         caml = self.miro.caml_fifo.latest()
         camr = self.miro.camr_fifo.latest()
         if (caml is not None) and (camr is not None):
-            print 'Cams update ...'
             self.plt_camera_l_handle.set_data(caml)
             self.plt_camera_r_handle.set_data(camr)
 
 
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
-
-            print 'Action/State update ...'
             # Updating emotion
             self.plt_circle_red_handle.set_offsets([self.miro.core_state.emotion.valence * 16.0 - 8.0, self.miro.core_state.emotion.arousal * 16.0 - 8.0])
             self.plt_circle_blue_handle.set_offsets([self.miro.core_state.mood.valence*16.0-8.0, self.miro.core_state.mood.arousal*16.0-8.0])
             self.plt_circle_yellow_handle.set_offsets([self.miro.core_state.sleep.wakefulness*16.0-8.0, self.miro.core_state.sleep.pressure*16.0-8.0])
 
-            print 'GPR update ...'
             # Updating GPR
             for bar, h in zip(self.plt_GPR_handle, self.miro.core_state.selection):
                 bar.set_height(h)
 
-            print 'Priority update ...'
             # Updating priority
             p = self.miro.core_state.priority
             d = self.miro.core_state.disinhibition
@@ -426,9 +419,8 @@ class MiroGI():
             self.plt_priority_8_handle.set_linewidths(3 * d[7])
             self.plt_priority_8_handle.set_alpha(p[7])
 
-            print 'Biological Clock time update ...'
             # Updating Biological Clock time.
-            print(self.miro.platform_state.rtc_hrs)
+            #print(self.miro.platform_state.rtc_hrs)
             ang = np.deg2rad(270-(self.miro.platform_state.rtc_hrs*360.0/24.0))
             self.ax_bioclock_handle.set_positions((0.0, 0.0), (np.cos(ang) * 0.7, np.sin(ang) * 0.7))
 
