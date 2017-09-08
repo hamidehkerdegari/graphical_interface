@@ -88,7 +88,8 @@ class MiroGI():
         self.ax_GPR.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
         self.ax_GPR.set_xticks(self.index + self.bar_width / 2)
         self.ax_GPR.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-        self.colors = ['tomato', 'darkcyan', 'paleturquoise', 'blueviolet', 'hotpink', 'seagreen', 'navy']
+        self.colors = ['firebrick', 'green', 'mediumblue', 'm', 'darkcyan', 'olive', 'darkorange','dimgray']
+
         self.plt_GPR_handle = self.ax_GPR.bar(self.index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
         #  Initializing moving circle.
@@ -137,35 +138,35 @@ class MiroGI():
         self.ax_priorities.set_aspect('auto')
 
         self.ax_priorities.scatter(3.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_1_handle = self.ax_priorities.scatter(3.8, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_1_handle = self.ax_priorities.scatter(3.8, 5.8, s=1600, c=self.colors[0], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(3.8, 5.8, "A1", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(7.0, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_2_handle = self.ax_priorities.scatter(7.0, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_2_handle = self.ax_priorities.scatter(7.0, 3.0, s=1600, c=self.colors[1], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(7.0, 3.0, "A2", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(10.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c=self.colors[2], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(10.3, 5.8, "A3", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(13.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c=self.colors[3], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(13.6, 3.0, "A4", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(16.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c=self.colors[4], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(16.8, 5.8, "A5", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(20.1, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c=self.colors[5], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(20.1, 3.0, "A6", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(23.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c=self.colors[6], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(23.3, 5.8, "A7", size=20, ha="center", va="center", zorder=2)
 
         self.ax_priorities.scatter(26.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
-        self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='r', linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
+        self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c=self.colors[7], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(26.6, 3.0, "A8", size=20, ha="center", va="center", zorder=2)
 
         # Initialize Biological Clock time.
@@ -301,24 +302,23 @@ class MiroGI():
         ax.set_xlim([0, self.screen_size[0]])
         ax.set_ylim([0, self.screen_size[1]])
 
-        index = np.arange(6)
         # Initializing the priority plot.
-        self.ax_priority = lib.add_subplot(ax, fig, [0.125, 0.715, 0.15*2.0, 0.12*2.0])
+        self.ax_priority = lib.add_subplot(ax, fig, [0.125, 0.715, 0.15*2.0, 0.11*2.0])
         RmFrame()
         self.ax_priority.patch.set_visible(False)  # Remove backgrounf
         self.ax_priority.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
-        self.ax_priority.set_xticks(index + self.bar_width / 2)
-        self.ax_priority.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F'])
-        self.plt_priority_handle = self.ax_priority.bar(index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+        self.ax_priority.set_xticks(self.index + self.bar_width / 2)
+        self.ax_priority.set_xticklabels(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'])
+        self.plt_priority_handle = self.ax_priority.bar(self.index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
         # Initializing the disinhibition plot.
-        self.ax_disinhibition = lib.add_subplot(ax, fig, [0.603, 0.03, 0.15 * 2.0, 0.12 * 2.0])
+        self.ax_disinhibition = lib.add_subplot(ax, fig, [0.603, 0.03, 0.15*2.0, 0.11*2.0])
         RmFrame()
         self.ax_disinhibition.patch.set_visible(False)  # Remove backgrounf
         self.ax_disinhibition.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
-        self.ax_disinhibition.set_xticks(index + self.bar_width / 2)
-        self.ax_disinhibition.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F'])
-        self.plt_disinhibition_handle = self.ax_disinhibition.bar(index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+        self.ax_disinhibition.set_xticks(self.index + self.bar_width / 2)
+        self.ax_disinhibition.set_xticklabels(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'])
+        self.plt_disinhibition_handle = self.ax_disinhibition.bar(self.index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
 
         # Back Button
         #Im_Back = plt.imread('../documents/back.png')
