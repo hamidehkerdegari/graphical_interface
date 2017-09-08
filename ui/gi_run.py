@@ -58,6 +58,7 @@ class MiroGI():
         self.img_back_SAM = plt.imread('../documents/SpetialAM.png')
         self.img_back_GPR = plt.imread('../documents/GPRWindow.png')
         self.img_back_AS = plt.imread('../documents/affect_state.png')
+        self.img_back_InOut = plt.imread('../documents/in_out.png')
 
         self.init_MainWindow()
         plt.show()
@@ -184,6 +185,7 @@ class MiroGI():
         Im_Button = plt.imread('../documents/full_screen.png')
         self.ButAM = Cl_Button('', Im_Button, 'honeydew', 'w', 0.542, 0.375, self.init_SpetialAMWindow)
         self.ButGPR = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.654, 0.762, self.init_GPRWindow)
+        self.ButInOut = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.68, 0.762, self.init_InOut)
         self.ButAS = Cl_Button('', Im_Button, 'w', 'whitesmoke', 0.755, 0.38, self.init_AffectStateWindow)
 
         # Close Button
@@ -281,6 +283,50 @@ class MiroGI():
         cid = fig.canvas.mpl_connect('close_event', self.callback_WinClose)
 
         self.GPR_anim = animation.FuncAnimation(fig, self.update_GPRWindow, interval=self.interval)
+
+    # =========================
+
+    def init_InOut(self): # Showing inputs (priority) and the outputs (disinhibition)
+        # Initializing a new window.
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 5))
+        fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0, hspace=0.0)
+        pltManager = plt.get_current_fig_manager()
+        #pltManager.full_screen_toggle()
+        pltManager.resize(*pltManager.window.maxsize())  # Make full screen
+        fig.canvas.set_window_title('inputs (priority) and the outputs (disinhibition)')
+
+        # Setting the back/static image.
+        ax.imshow(self.img_back_InOut, zorder=0, aspect='auto', extent=[0, self.screen_size[0], 0, self.screen_size[1]])
+        ax.axis('off')  # clear x- and y-axes
+        ax.set_xlim([0, self.screen_size[0]])
+        ax.set_ylim([0, self.screen_size[1]])
+
+        index = np.arange(6)
+        # Initializing the priority plot.
+        self.ax_priority = lib.add_subplot(ax, fig, [0.125, 0.715, 0.15*2.0, 0.12*2.0])
+        RmFrame()
+        self.ax_priority.patch.set_visible(False)  # Remove backgrounf
+        self.ax_priority.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
+        self.ax_priority.set_xticks(index + self.bar_width / 2)
+        self.ax_priority.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F'])
+        self.plt_priority_handle = self.ax_priority.bar(index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+
+        # Initializing the disinhibition plot.
+        self.ax_disinhibition = lib.add_subplot(ax, fig, [0.603, 0.03, 0.15 * 2.0, 0.12 * 2.0])
+        RmFrame()
+        self.ax_disinhibition.patch.set_visible(False)  # Remove backgrounf
+        self.ax_disinhibition.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on')
+        self.ax_disinhibition.set_xticks(index + self.bar_width / 2)
+        self.ax_disinhibition.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F'])
+        self.plt_disinhibition_handle = self.ax_disinhibition.bar(index, (1.0, 1.0, 1.0, 1.0, 1.0, 1.0), self.bar_width, zorder=1, alpha=self.opacity, color=self.colors)
+
+        # Back Button
+        #Im_Back = plt.imread('../documents/back.png')
+        #self.ButAS = Cl_Button('', Im_Back, 'whitesmoke', 'paleturquoise', 0.0, 0.96, plt.close)
+
+        cid = fig.canvas.mpl_connect('close_event', self.callback_WinClose)
+
+        self.InOut_anim = animation.FuncAnimation(fig, self.update_InOutWindow, interval=self.interval)
 
     # =========================
 
@@ -425,6 +471,21 @@ class MiroGI():
             self.miro.update_data()
 
             for bar, h in zip(self.plt_GPRWin_handle, self.miro.selection):
+                bar.set_height(h)
+
+    # =========================
+
+    def update_InOutWindow(self, i):
+        if rospy.core.is_shutdown():
+            return
+
+        if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
+            self.miro.update_data()
+
+            for bar, h in zip(self.plt_priority_handle, self.miro.priority):
+                bar.set_height(h)
+
+            for bar, h in zip(self.plt_disinhibition_handle, self.miro.disinhibition):
                 bar.set_height(h)
 
     # =========================
