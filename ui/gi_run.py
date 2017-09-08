@@ -371,41 +371,37 @@ class MiroGI():
         if rospy.core.is_shutdown() or not animate_MainWindow:
             return
 
-        #print 'H:', self.miro.rtc_hrs, 'M:',self.miro.rtc_mins, 'S:',self.miro.rtc_secs, 'skew:',self.miro.rtc_skew
+        print '\r\rMain Window Update ==='
 
-        if (self.miro.image_priw is not None):
-            self.plt_priw_handle.set_data(self.miro.image_priw[:, :, 0])
+        priw = self.miro.priw_fifo.latest()
+        if (priw is not None):
+            self.plt_priw_handle.set_data(priw[:, :, 0])
 
-        if self.show_pri == 2:
-            if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle.set_data(self.miro.image_pril)
-                self.plt_camera_r_handle.set_data(self.miro.image_prir)
-        elif self.show_pri == 1:
-            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
-                self.plt_camera_l_handle.set_data(self.miro.image_caml)
-                self.plt_camera_r_handle.set_data(self.miro.image_camr)
-        elif self.show_pri == 0:
-            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None) and \
-               (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle.set_data(self.miro.image_caml)
-                self.plt_camera_r_handle.set_data(self.miro.image_camr)
+        caml = self.miro.caml_fifo.latest()
+        camr = self.miro.camr_fifo.latest()
+        if (caml is not None) and (camr is not None):
+            print 'Cams update ...'
+            self.plt_camera_l_handle.set_data(caml)
+            self.plt_camera_r_handle.set_data(camr)
 
 
         if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
-            self.miro.update_data()
 
-            # Plotting animation
-            self.plt_circle_red_handle.set_offsets([self.miro.emotion.valence * 16.0 - 8.0, self.miro.emotion.arousal * 16.0 - 8.0])
-            self.plt_circle_blue_handle.set_offsets([self.miro.mood.valence*16.0-8.0, self.miro.mood.arousal*16.0-8.0])
-            self.plt_circle_yellow_handle.set_offsets([self.miro.sleep.wakefulness*16.0-8.0, self.miro.sleep.pressure*16.0-8.0])
+            print 'Action/State update ...'
+            # Updating emotion
+            self.plt_circle_red_handle.set_offsets([self.miro.core_state.emotion.valence * 16.0 - 8.0, self.miro.core_state.emotion.arousal * 16.0 - 8.0])
+            self.plt_circle_blue_handle.set_offsets([self.miro.core_state.mood.valence*16.0-8.0, self.miro.core_state.mood.arousal*16.0-8.0])
+            self.plt_circle_yellow_handle.set_offsets([self.miro.core_state.sleep.wakefulness*16.0-8.0, self.miro.core_state.sleep.pressure*16.0-8.0])
 
+            print 'GPR update ...'
             # Updating GPR
-            for bar, h in zip(self.plt_GPR_handle, self.miro.selection):
+            for bar, h in zip(self.plt_GPR_handle, self.miro.core_state.selection):
                 bar.set_height(h)
 
+            print 'Priority update ...'
             # Updating priority
-            p = self.miro.priority
-            d = self.miro.disinhibition
+            p = self.miro.core_state.priority
+            d = self.miro.core_state.disinhibition
             self.plt_priority_1_handle.set_linewidths(3 * d[0])
             self.plt_priority_1_handle.set_alpha(p[0])
 
@@ -430,9 +426,10 @@ class MiroGI():
             self.plt_priority_8_handle.set_linewidths(3 * d[7])
             self.plt_priority_8_handle.set_alpha(p[7])
 
+            print 'Biological Clock time update ...'
             # Updating Biological Clock time.
-            print(self.miro.rtc_hrs, self.miro.rtc_mins, self.miro.rtc_secs)
-            ang = np.deg2rad(270-(self.miro.rtc_hrs*360.0/24.0))
+            print(self.miro.platform_state.rtc_hrs)
+            ang = np.deg2rad(270-(self.miro.platform_state.rtc_hrs*360.0/24.0))
             self.ax_bioclock_handle.set_positions((0.0, 0.0), (np.cos(ang) * 0.7, np.sin(ang) * 0.7))
 
     # ==========================
@@ -441,25 +438,29 @@ class MiroGI():
         if rospy.core.is_shutdown():
             return
 
-        if (self.miro.image_priw is not None):
-            self.plt_priw_handle_SAM.set_data(self.miro.image_priw[:, :, 0])
+        priw = self.miro.priw_fifo.latest()
+        if (priw is not None):
+            self.plt_priw_handle_SAM.set_data(priw[:, :, 0])
 
+        pril = self.miro.pril_fifo.latest()
+        prir = self.miro.prir_fifo.latest()
+        caml = self.miro.caml_fifo.latest()
+        camr = self.miro.camr_fifo.latest()
         if self.show_pri == 2:
-            if (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril)
-                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir)
+            if (pril is not None) and (prir is not None):
+                self.plt_camera_l_handle_SAM.set_data(pril)
+                self.plt_camera_r_handle_SAM.set_data(prir)
         elif self.show_pri == 1:
-            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None):
-                self.plt_camera_l_handle_SAM.set_data(self.miro.image_caml)
-                self.plt_camera_r_handle_SAM.set_data(self.miro.image_camr)
+            if (caml is not None) and (camr is not None):
+                self.plt_camera_l_handle_SAM.set_data(caml)
+                self.plt_camera_r_handle_SAM.set_data(camr)
         elif self.show_pri == 0:
-            if (self.miro.image_caml is not None) and (self.miro.image_camr is not None) and \
-               (self.miro.image_pril is not None) and (self.miro.image_prir is not None):
-                self.plt_camera_l_handle_SAM.set_data(self.miro.image_caml)
-                self.plt_camera_l_handle_SAM.set_data(self.miro.image_pril)
+            if (caml is not None) and (camr is not None) and (pril is not None) and (prir is not None):
+                self.plt_camera_l_handle_SAM.set_data(caml)
+                self.plt_camera_l_handle_SAM.set_data(pril)
 
-                self.plt_camera_r_handle_SAM.set_data(self.miro.image_camr)
-                self.plt_camera_r_handle_SAM.set_data(self.miro.image_prir)
+                self.plt_camera_r_handle_SAM.set_data(camr)
+                self.plt_camera_r_handle_SAM.set_data(prir)
 
     # =========================
 
@@ -467,10 +468,8 @@ class MiroGI():
         if rospy.core.is_shutdown():
             return
 
-        if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
-            self.miro.update_data()
-
-            for bar, h in zip(self.plt_GPRWin_handle, self.miro.selection):
+        if self.miro.core_state is not None:
+            for bar, h in zip(self.plt_GPRWin_handle, self.miro.core_state.selection):
                 bar.set_height(h)
 
     # =========================
@@ -479,13 +478,11 @@ class MiroGI():
         if rospy.core.is_shutdown():
             return
 
-        if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
-            self.miro.update_data()
-
-            for bar, h in zip(self.plt_priority_handle, self.miro.priority):
+        if self.miro.core_state is not None:
+            for bar, h in zip(self.plt_priority_handle, self.miro.core_state.priority):
                 bar.set_height(h)
 
-            for bar, h in zip(self.plt_disinhibition_handle, self.miro.disinhibition):
+            for bar, h in zip(self.plt_disinhibition_handle, self.miro.core_state.disinhibition):
                 bar.set_height(h)
 
     # =========================
@@ -494,13 +491,10 @@ class MiroGI():
         if rospy.core.is_shutdown():
             return
 
-        if (self.miro.platform_sensors is not None) and (self.miro.core_state is not None):
-            self.miro.update_data()
-
-            # Plotting animation
-            self.plt_circle_red_handle_AS.set_offsets([self.miro.emotion.valence * 16.0 - 8.0, self.miro.emotion.arousal * 16.0 - 8.0])
-            self.plt_circle_blue_handle_AS.set_offsets([self.miro.mood.valence * 16.0 - 8.0, self.miro.mood.arousal * 16.0 - 8.0])
-            self.plt_circle_yellow_handle_AS.set_offsets([self.miro.sleep.wakefulness * 16.0 - 8.0, self.miro.sleep.pressure * 16.0 - 8.0])
+        if self.miro.core_state is not None:
+            self.plt_circle_red_handle_AS.set_offsets([self.miro.core_state.emotion.valence * 16.0 - 8.0, self.miro.core_state.emotion.arousal * 16.0 - 8.0])
+            self.plt_circle_blue_handle_AS.set_offsets([self.miro.core_state.mood.valence * 16.0 - 8.0, self.miro.core_state.mood.arousal * 16.0 - 8.0])
+            self.plt_circle_yellow_handle_AS.set_offsets([self.miro.core_state.sleep.wakefulness * 16.0 - 8.0, self.miro.core_state.sleep.pressure * 16.0 - 8.0])
 
     # =========================
     # Events callback functions.

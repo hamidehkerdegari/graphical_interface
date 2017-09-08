@@ -335,7 +335,7 @@ class miro_ros_client:
 
     def callback_caml(self, frm):
         self.caml_fifo.push(frm)
-        self.image_caml = self.caml_fifo.latest()
+        #self.image_caml = self.caml_fifo.latest()
 
         if self.do_config:
             self.config_send()
@@ -343,23 +343,20 @@ class miro_ros_client:
 
     def callback_camr(self, frm):
         self.camr_fifo.push(frm)
-        self.image_camr = self.camr_fifo.latest()
+        #self.image_camr = self.camr_fifo.latest()
 
     # priority frames
     def callback_pril(self, frm):
         self.pril_fifo.push(frm)
-        self.image_pril = self.pril_fifo.latest()
-        #self.image_pril = self.image_pril.scale_simple(128, 96, INTERPTYPE)
+        #self.image_pril = self.pril_fifo.latest()
 
     def callback_prir(self, frm):
         self.prir_fifo.push(frm)
-        self.image_prir = self.prir_fifo.latest()
-        #self.image_prir = self.image_prir.scale_simple(128, 96, INTERPTYPE)
+        #self.image_prir = self.prir_fifo.latest()
 
     def callback_priw(self, frm):
         self.priw_fifo.push(frm)
-        self.image_priw = self.priw_fifo.latest()
-        #self.image_priw = self.image_priw.scale_simple(320, 16, INTERPTYPE)
+        #self.image_priw = self.priw_fifo.latest()
 
     '''
     def callback_rgbl(self, frm):
@@ -524,7 +521,7 @@ class miro_ros_client:
             '''
 
     #==================================================
-    def update_data(self):
+    '''def update_data(self):
         # sensors
         q = self.platform_sensors
         self.platform_sensors = None
@@ -570,3 +567,4 @@ class miro_ros_client:
             #self.rtc_mins = q.rtc_mins
             #self.rtc_secs = q.rtc_secs
             self.rtc_skew = q.rtc_skew
+    '''
