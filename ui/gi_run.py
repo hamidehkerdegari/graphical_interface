@@ -137,35 +137,35 @@ class MiroGI():
         self.ax_priorities.set_ylim([0, 10])
         self.ax_priorities.set_aspect('auto')
 
-        self.ax_priorities.scatter(3.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_1B_handle = self.ax_priorities.scatter(3.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_1_handle = self.ax_priorities.scatter(3.8, 5.8, s=1600, c=self.colors[0], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(3.8, 5.8, "A1", size=20, ha="center", va="center", zorder=2)
 
-        self.ax_priorities.scatter(7.0, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_2B_handle = self.ax_priorities.scatter(7.0, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_2_handle = self.ax_priorities.scatter(7.0, 3.0, s=1600, c=self.colors[1], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(7.0, 3.0, "A2", size=20, ha="center", va="center", zorder=2)
 
-        self.ax_priorities.scatter(10.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_3B_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_3_handle = self.ax_priorities.scatter(10.3, 5.8, s=1600, c=self.colors[2], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(10.3, 5.8, "A3", size=20, ha="center", va="center", zorder=2)
 
-        self.ax_priorities.scatter(13.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_4B_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_4_handle = self.ax_priorities.scatter(13.6, 3.0, s=1600, c=self.colors[3], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(13.6, 3.0, "A4", size=20, ha="center", va="center", zorder=2)
 
-        self.ax_priorities.scatter(16.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_5B_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_5_handle = self.ax_priorities.scatter(16.8, 5.8, s=1600, c=self.colors[4], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(16.8, 5.8, "A5", size=20, ha="center", va="center", zorder=2)
 
-        self.ax_priorities.scatter(20.1, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_6B_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_6_handle = self.ax_priorities.scatter(20.1, 3.0, s=1600, c=self.colors[5], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(20.1, 3.0, "A6", size=20, ha="center", va="center", zorder=2)
 
-        self.ax_priorities.scatter(23.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_7B_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_7_handle = self.ax_priorities.scatter(23.3, 5.8, s=1600, c=self.colors[6], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(23.3, 5.8, "A7", size=20, ha="center", va="center", zorder=2)
 
-        self.ax_priorities.scatter(26.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
+        self.plt_priority_8B_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c='w', linewidths=1, edgecolor='k', alpha=1, zorder=0)
         self.plt_priority_8_handle = self.ax_priorities.scatter(26.6, 3.0, s=1600, c=self.colors[7], linewidths=1, edgecolor='k', alpha=0.5, zorder=1)
         self.ax_priorities.text(26.6, 3.0, "A8", size=20, ha="center", va="center", zorder=2)
 
@@ -395,27 +395,38 @@ class MiroGI():
             # Updating priority
             p = self.miro.core_state.priority
             d = self.miro.core_state.disinhibition
+            print p
+            print d
+            print ''
+            self.plt_priority_1B_handle.set_linewidths(1+3 * d[0])
             self.plt_priority_1_handle.set_linewidths(3 * d[0])
             self.plt_priority_1_handle.set_alpha(p[0])
 
+            self.plt_priority_2B_handle.set_linewidths(1+3 * d[1])
             self.plt_priority_2_handle.set_linewidths(3 * d[1])
             self.plt_priority_2_handle.set_alpha(p[1])
 
+            self.plt_priority_3B_handle.set_linewidths(1+3 * d[2])
             self.plt_priority_3_handle.set_linewidths(3 * d[2])
             self.plt_priority_3_handle.set_alpha(p[2])
 
+            self.plt_priority_4B_handle.set_linewidths(1+3 * d[3])
             self.plt_priority_4_handle.set_linewidths(3 * d[3])
             self.plt_priority_4_handle.set_alpha(p[3])
 
+            self.plt_priority_5B_handle.set_linewidths(1+3 * d[4])
             self.plt_priority_5_handle.set_linewidths(3 * d[4])
             self.plt_priority_5_handle.set_alpha(p[4])
 
+            self.plt_priority_6B_handle.set_linewidths(1+3 * d[5])
             self.plt_priority_6_handle.set_linewidths(3 * d[5])
             self.plt_priority_6_handle.set_alpha(p[5])
 
+            self.plt_priority_7B_handle.set_linewidths(1+3 * d[6])
             self.plt_priority_7_handle.set_linewidths(3 * d[6])
             self.plt_priority_7_handle.set_alpha(p[6])
 
+            self.plt_priority_8B_handle.set_linewidths(1+3 * d[7])
             self.plt_priority_8_handle.set_linewidths(3 * d[7])
             self.plt_priority_8_handle.set_alpha(p[7])
 
