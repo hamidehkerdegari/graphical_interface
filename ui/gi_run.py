@@ -395,9 +395,7 @@ class MiroGI():
             # Updating priority
             p = self.miro.core_state.priority
             d = self.miro.core_state.disinhibition
-            print p
-            print d
-            print ''
+
             self.plt_priority_1B_handle.set_linewidths(1+3 * d[0])
             self.plt_priority_1_handle.set_linewidths(3 * d[0])
             self.plt_priority_1_handle.set_alpha(p[0])
