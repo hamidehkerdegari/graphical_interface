@@ -42,7 +42,6 @@ class Cl_Button(object):
 
 class MiroGI():
     def __init__(self):
-        self.show_pri = 1
         self.interval = 1000/UpdateRate
         self.screen_size = [800, 450]
         self.opacity = 1.0
