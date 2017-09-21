@@ -10,7 +10,6 @@ import numpy as np
 from matplotlib.widgets import Cursor
 from matplotlib.widgets import Button, RadioButtons
 import matplotlib.patches as patches
-from scipy.ndimage.filters import gaussian_filter
 
 # ==============================================================
 global animate_MainWindow
