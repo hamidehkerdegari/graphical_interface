@@ -149,7 +149,7 @@ You can use some shortcuts on the graphical interface:
 - Ctrl+S: For saving the interface as a picture
 
 
-======
+
 
 ## Developers Instructions
 In general, the graphical interface application has been developed using Matplotlib which is a Python 2D plotting library.
